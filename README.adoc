@@ -4,6 +4,9 @@ A Java project developed by students during the https://github.com/oliviercaillo
 
 The code is hereby published under the MIT License, with their permission.
 
+
+image:https://travis-ci.com/CHARLONCyril/2D-Library.svg?branch=dev["Build Status", link="https://travis-ci.org/travis-ci/travis-web"]
+
 [![Build status](https://travis-ci.com/CHARLONCyril/2D-Library.svg?branch=dev)](https://travis-ci.org/travis-ci/travis-web)
 
 Plan détaillé des différentes livraisons:
