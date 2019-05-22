@@ -16,8 +16,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import java.util.Enumeration;
 import java.util.List;
 
@@ -49,6 +51,7 @@ import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 import io.github.oliviercailloux.twod_library.model.SearchData;
+
 
 public class Window2DLibrary extends JFrame {
 
@@ -244,52 +247,6 @@ public class Window2DLibrary extends JFrame {
 			leaning = bLeanS.isSelected();
 		}
 	}
-	class LessBookPerShelfListener implements ActionListener {
-
-		private int nbBooksPerShelf;
-
-		private JFormattedTextField numberBooksPerShelfTextField;
-
-		public LessBookPerShelfListener(int nbBooksPerShelf, JFormattedTextField numberBooksPerShelfTextField) {
-			this.nbBooksPerShelf = nbBooksPerShelf;
-			this.numberBooksPerShelfTextField = numberBooksPerShelfTextField;
-		}
-
-		/**
-		 * function launched when the user performs an action
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (nbBooksPerShelf != 1) {
-				nbBooksPerShelf--;
-				numberBooksPerShelfTextField.setValue(nbBooksPerShelf);
-			}
-		}
-	}
-
-	class MoreBookPerShelfListener implements ActionListener {
-
-		private int nbBooksPerShelf;
-
-		private JFormattedTextField numberBooksPerShelfTextField;
-
-		public MoreBookPerShelfListener(int nbBooksPerShelf, JFormattedTextField numberBooksPerShelfTextField) {
-			this.nbBooksPerShelf = nbBooksPerShelf;
-			this.numberBooksPerShelfTextField = numberBooksPerShelfTextField;
-		}
-
-		/**
-		 * function launched when the user performs an action
-		 */
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (nbBooksPerShelf != 18) {
-				nbBooksPerShelf++;
-				numberBooksPerShelfTextField.setValue(nbBooksPerShelf);
-			}
-		}
-	}
 
 	class removeBookButtonListener implements ActionListener {
 
@@ -336,9 +293,9 @@ public class Window2DLibrary extends JFrame {
 			this.setSearchTextField(searchTextField2);
 			this.setQteBookSerach(qteBookSerach);
 		}
-
 		@Override
 		public void actionPerformed(ActionEvent e) {
+
 			if (getSearchTextField().equals("")) {
 				JOptionPane.showMessageDialog(optionsJPanel, "Give some search criteria");
 			} else {
@@ -395,6 +352,7 @@ public class Window2DLibrary extends JFrame {
 		public void setQteBookSerach(JFormattedTextField qteBookSerach) {
 			this.qteBookSerach = qteBookSerach;
 		}
+
 
 	}
 
@@ -471,7 +429,7 @@ public class Window2DLibrary extends JFrame {
 
 	boolean leaning = true;
 
-	int nbBooksPerShelf = 18;
+	int nbBooksPerShelf = 10;
 
 	JPanel pDCenter;
 
@@ -563,6 +521,8 @@ public class Window2DLibrary extends JFrame {
 	 */
 	public JPanel getCenterPanelOptions() {
 
+		final int CAPACITY_MIN_PER_SHELF = 5;
+		final int CAPACITY_MAX_PER_SHELF = 20;
 		optionsJPanel = new JPanel();
 		Image image = null;
 		JPanel optionsNames = new JPanel(new GridLayout(0, 2, 40, 30));
@@ -712,10 +672,68 @@ public class Window2DLibrary extends JFrame {
 		sortAscendingYearButton = new JCheckBox("Most recent first (sort by year)");
 		sortAscendingYearButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAscendingYearButton.setOpaque(false);
+
+
+		numberBooksPerShelfTextField.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (Integer.parseInt(numberBooksPerShelfTextField.getText()) >= CAPACITY_MAX_PER_SHELF) {
+					numberBooksPerShelfTextField.setText(String.valueOf(CAPACITY_MAX_PER_SHELF));
+				} else if (Integer.parseInt(numberBooksPerShelfTextField.getText()) <= CAPACITY_MIN_PER_SHELF) {
+					numberBooksPerShelfTextField.setText(String.valueOf(CAPACITY_MIN_PER_SHELF));
+				} else {
+					numberBooksPerShelfTextField.setText(numberBooksPerShelfTextField.getText());
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
+		});
+
 		JButton lessBookPerS = new JButton("Less");
-		lessBookPerS.addActionListener(new LessBookPerShelfListener(nbBooksPerShelf, numberBooksPerShelfTextField));
 		JButton moreBookPerS = new JButton("More");
-		moreBookPerS.addActionListener(new MoreBookPerShelfListener(nbBooksPerShelf, numberBooksPerShelfTextField));
+		ActionListener actionListener = new ActionListener() {
+			/**
+			 * For the less and more button we used :
+			 * https://stackoverflow.com/questions/7300135/how-to-use-an-action-listener-to-check-if-a-certain-button-was-clicked
+			 * 
+			 */
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switch (e.getActionCommand()) {
+				case "More":
+					if (getFieldValue() >= CAPACITY_MAX_PER_SHELF) {
+						JOptionPane.showMessageDialog(optionsJPanel, "Too many books");
+					} else {
+						setFieldValue(getFieldValue() + 1);
+					}
+					break;
+				case "Less":
+					if (getFieldValue() <= CAPACITY_MIN_PER_SHELF) {
+						JOptionPane.showMessageDialog(optionsJPanel,
+								"Your library can not have less than 5 books because it is not visible");
+					} else {
+						setFieldValue(getFieldValue() - 1);
+					}
+					break;
+				}
+			}
+
+			private void setFieldValue(int value) {
+				numberBooksPerShelfTextField.setText(String.valueOf(value));
+			}
+
+			private int getFieldValue() {
+				return Integer.parseInt(numberBooksPerShelfTextField.getText());
+			}
+
+		};
+		moreBookPerS.addActionListener(actionListener);
+		lessBookPerS.addActionListener(actionListener);
 
 		backgroundColorTitleJPanel.add(backgroundColorTitleJLabel);
 		shelvesColorTitleJPanel.add(shelvesColorTitleJLabel);
@@ -837,6 +855,7 @@ public class Window2DLibrary extends JFrame {
 		JFormattedTextField qteBookSerach = new JFormattedTextField("Searching Not limitted");
 
 		searchJPanel.add(qteBookSerach);
+
 		searchJPanel.add(searchButton);
 		bookFormJPanel.add(searchJPanel);
 		bookFormJPanel.add(firstNameJLabel);
@@ -960,18 +979,22 @@ public class Window2DLibrary extends JFrame {
 
 		switch (sort) {
 		case "Author":
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByAuthor(), nbBooksPerShelf));
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByAuthor(),
+					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		case "Title":
 			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));	
+
 			break;
 		case "Year":
 			boolean rising = !sortAscendingYearButton.isSelected();
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByYear(rising), nbBooksPerShelf));
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByYear(rising),
+					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		default:
 			 svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
 			 break;
+
 		}
 		updateDrawingLibrary(svgLibrary);
 	}
@@ -979,7 +1002,8 @@ public class Window2DLibrary extends JFrame {
 	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException {
 
 		try {
-			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor);
+			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor,
+					numberBooksPerShelfTextField.getText());
 		} catch (IOException e) {
 			LOGGER.error(
 					"Error when we generateButton the library with ordinary field : Some parameters seems npt ok PLEASE CHECK GENERATE METHOD");
