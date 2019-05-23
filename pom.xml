@@ -92,39 +92,8 @@
     		<groupId>org.apache.xmlgraphics</groupId>
     		<artifactId>batik-codec</artifactId>
    			<version>1.11</version>
-		</dependency>
-			<!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-surefire-plugin -->
-	<dependency>
-	    <groupId>org.apache.maven.plugins</groupId>
-	    <artifactId>maven-surefire-plugin</artifactId>
-	    <version>3.0.0-M3</version>
-	    <exclusions>
-	        <exclusion>
-	            <groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-	        </exclusion>
-	    </exclusions>
-	</dependency>
-		
+		</dependency>	
 	</dependencies>
 
-	<build>
-	<plugins>
-	 <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <version>3.0.0-M3</version>
-        <configuration>
-          <useSystemClassLoader>false</useSystemClassLoader>
-                <excludes>
-                    <exclude>**/*ConnectionToCongressLibraryTest.java</exclude>
-                </excludes>
-                
-        </configuration>
-      </plugin>
-      
-	</plugins>
-	</build>
-
-	
+		
 </project>
