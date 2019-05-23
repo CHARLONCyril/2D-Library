@@ -92,8 +92,6 @@
     		<groupId>org.apache.xmlgraphics</groupId>
     		<artifactId>batik-codec</artifactId>
    			<version>1.11</version>
-		</dependency>	
+		</dependency>
 	</dependencies>
-
-
 </project>
