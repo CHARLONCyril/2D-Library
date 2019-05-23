@@ -48,19 +48,7 @@ public class LibraryTest {
 		b3.setYear(1860);
 		books.add(b3);
 
-		library = new Library(books, 2);
-	}
-
-	@Test
-	public void testEqual() {
-		Library library2 = new Library(library.getListOfAllTheBooks(), 2);
-		double size = 3.0;
-		library.setFrameSizeH(size);
-		library2.setFrameSizeH(size);
-		library.setFrameSizeW(size);
-		library2.setFrameSizeW(size);
-		assertTrue(library.isEqual(library2) && library2.isEqual(library));
-		assertTrue(library.hashCode() == library2.hashCode());
+		library = new Library(Library.createLibrary(books, 1));
 	}
 
 	@Test
