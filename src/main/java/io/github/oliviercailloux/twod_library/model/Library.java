@@ -22,6 +22,7 @@ import com.google.common.base.Preconditions;
 public class Library implements JavaSearcher {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(Library.class);
+	public static final double minWidht = 500f;
 
 	/**
 	 *
@@ -75,6 +76,11 @@ public class Library implements JavaSearcher {
 		Dimension dim = atk.getScreenSize();
 		int w = dim.width;
 		this.frameSizeW = w;
+	}
+
+	public Library(List<Shelf> shelves) {
+		this.shelves = shelves;
+		this.frameSizeW = minWidht;
 	}
 
 	public double getFrameSizeH() {
