@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.twod_library.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,27 +48,31 @@ public class LibrarySortTest {
 		b3.setTitle("Les misérables");
 		b3.setYear(1860);
 		expected.add(b3);
-		
+
+
+		this.library.setShelves(Library.createLibrary(expected, 1));
 		// act
 		List<Book> actual = new ArrayList<>();
 		actual = library.sortByYear(true);
-		
 		List<Book> actual2 = new ArrayList<>();
 		actual2 = library.sortByYear(false);
-		
-		//assert
-		for(int i = 0; i < actual.size(); i++){
-			if(i != actual.size()-1){
-				if(actual.get(i).getYear() <= actual.get(i+1).getYear()){
+		// assert
+		for (int i = 0; i < actual.size(); i++) {
+			if (i != actual.size() - 1) {
+				if (actual.get(i).getYear() <= actual.get(i + 1).getYear()) {
+
 					// good
 				} else {
 					fail("Not sorted as expected");
 				}
 			}
 		}
-		for(int i = 0; i < actual2.size(); i++){
-			if(i != actual.size()-1){
-				if(actual.get(i).getYear() >= actual.get(i+1).getYear()){
+
+		for (int i = 0; i < actual2.size(); i++) {
+
+			if (i != actual2.size() - 1) {
+				if (actual2.get(i).getYear() >= actual2.get(i + 1).getYear()) {
+
 					// good
 				} else {
 					fail("Not sorted as expected");
@@ -104,7 +109,10 @@ public class LibrarySortTest {
 		b3.setTitle("Les misérables");
 		b3.setYear(1860);
 		expected.add(b3);
-		
+
+
+		this.library.setShelves(Library.createLibrary(expected, 1));
+
 		expected = library.sortByTitle();
 		
 		assertEquals(3, expected.size());
@@ -141,7 +149,9 @@ public class LibrarySortTest {
 		b3.setTitle("Les misérables");
 		b3.setYear(1860);
 		expected.add(b3);
-		
+
+		this.library.setShelves(Library.createLibrary(expected, 1));
+
 		expected = library.sortByAuthor();
 		
 		assertEquals(3, expected.size());

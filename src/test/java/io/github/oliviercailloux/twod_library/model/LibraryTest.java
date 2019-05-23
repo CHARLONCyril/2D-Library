@@ -117,10 +117,9 @@ public class LibraryTest {
 		filter.add("c");
 		SearchData s = SearchData.createSearchDataFilter(filter, "auteur");
 		List<Book> expected = library.getResultSearchData(s);
-		System.out.println(expected);
 		assertEquals(2, expected.size());
 		assertEquals("Une vie de coccinelle", expected.get(0).getTitle());
-		assertEquals("Les misérables", expected.get(0).getTitle());
+		assertEquals("Les misérables", expected.get(1).getTitle());
 	}
 
 	/**
@@ -164,8 +163,8 @@ public class LibraryTest {
 		SearchData s = SearchData.createSearchDataFilter(filter, "tout");
 		List<Book> expected = library.getResultSearchData(s);
 		assertEquals(3, expected.size());
-		assertEquals("Une vie de coccinelle", expected.get(0).getTitle());
-		assertEquals("Les misérable", expected.get(1).getTitle());
+		assertEquals("Les misérables", expected.get(0).getTitle());
+		assertEquals("Une vie de coccinelle", expected.get(1).getTitle());
 		assertEquals("Harry Poopper", expected.get(2).getTitle());
 	}
 

@@ -19,13 +19,13 @@ public class ConnectionToCongressLibraryTest {
 	 */
 	ConnectionToCongressLibrary connection;
 	
-	@Before
+	
 	public void setUp(){
 		String code = "70108638";
 		connection = new ConnectionToCongressLibrary(code);
 	}
 	
-	@Test
+	
 	public void getMarcXML_Should_Return_The_Marcxml_In_A_String() {
 		String actual = connection.getMarcXML();
 		CharSequence s1 = "French profiles.";
@@ -39,7 +39,7 @@ public class ConnectionToCongressLibraryTest {
 		assertTrue(b3);
 	}
 	
-	@Test 
+	 
 	public void extractData_Should_Returntitle_Author_and_Year_In_A_Tab_Of_String(){
 		String[] actual = connection.extractData();
 		assertEquals("French profiles.", actual[0]);
@@ -47,7 +47,7 @@ public class ConnectionToCongressLibraryTest {
 		assertEquals("[1970", actual[2]);
 	}
 
-	@After
+	
 	public void afterTest(){
 		connection = null;
 	}
