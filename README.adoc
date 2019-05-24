@@ -1,10 +1,70 @@
 = 2D Library
 
-image:https://travis-ci.com/CHARLONCyril/2D-Library.svg?branch=searchdata["Build Status", link="https://github.com/CHARLONCyril/2D-Library"]
+
+image:https://travis-ci.com/CHARLONCyril/2D-Library.svg?branch=planIteration2["Build Status", link="https://travis-ci.com/CHARLONCyril/2D-Library"]
 
 A Java project developed by students during the https://github.com/oliviercailloux/java-course[Java course] taught at Université Paris-Dauphine (in http://www.mido.dauphine.fr/[MIDO] L3 Apprentissage).
 
 The code is hereby published under the MIT License, with their permission.
 
-https://travis-ci.com/CHARLONCyril/2D-Library.svg?branch=searchdata
+= *Plan détaillé des différentes livraisons* :
+
+*Déjà fait*:
+
+* Contract1 : Bouton plus / moins qui fonctionne correctement.
+ 
+* Contract2 : Classe SearchData créée.
+
+* Interface1 : Interface JavaSearcher créée.
+
+* La fonctionnalité DrawBorder a été implémentée pour entourer les livres générés d'une bordure noire.
+
+___
+  
+Voici les objectifs à atteindre pour la *deuxième livraison* :
+
+* Nous appliquons les modifications que vous nous avez données dans vos commentaires : 
+   ** Utilisation de SWT à la place de SWING.
+   ** Modification du pom.xml.
+   ** Modification de l'interface JavaSearcher : modification du nom de la méthode getResultSearchData et suppression de la méthode getResultSearchDataLimited.
+   ** Créer un objet qui fait des recherches.
+
+ * Interface 2 : Nous allons développer l'interface 2 : C'est à dire développer une classe SimpleSearcher qui implémentera l'inteface que nous avons utilisée lors de la première livraison JavaSearcher. On lui fournira une liste de livres qu'il cherchera dans la bibliothèque déjà existante. 
+ 
+ * Nous devrons également coder la classe WritePrefs qui permettra la lecture et l'écriture des préférences d'affichage de l'utilisateur dans un fichier CSV.
+ 
+ * L'interface graphique utilisateur GuiPrefs qui permettra d'éditer les préférences d'affichage de l'utilisateur : 
+ Le programme devra lire un fichier CSV au démarrage, qu'on pourra modifier.
+ 
+ * L'interface graphique utilisateur GuiBooks devra être développée après GuiPrefs et permettra d'éditer la liste de livre.
+ 
+ * Nous allons également améliorer la façon dont nous cherchons les livres dans la bibliothèque.
+  Actuellement, il y a beaucoup de redondance de code, il serait agréable d'utiliser les lambda expressions afin de factoriser le code existant.
+  Nous allons utiliser les méthodes stream et filter pour se faire. 
+  Nous allons passer un paramètre de type fonction à notre méthode de recherche afin que notre méthode soit la plus générale possible. 
+ 
+  * Pour finir, dans un soucis d'ergonomie la bibliothèque se rechargera à chaque recherche. 
+  
+  ___
+ 
+Tâches à réaliser pour la *troisième livraison* :
+ 
+  * File1 et File2. Ces deux tâches fonctionnent déjà mais nous voulons les améliorer. Pour file1  nous voulons qu'il soit possible d'afficher la première page de couverture des livres si elle est fournie. Puis pour file2 nous voulons qu'il soit possible de déterminer l'épaisseur de chaque livre au lieu de fournir une hauteur et largeur pour avoir une meilleure précision et remplir de façon plus efficace chaque étagère.
+  
+  * Puis nous allons réaliser Ressource1 qui va permmettre d'inclure un fichier image illustrant le projet et Ressource2 qui permettra d'obtenir un aperçu d'une bibliothèque par défaut sans que l'utilisateur n'ai à cliquer sur "générer ma bibliothèque". 
+  
+  * Pour finir chaque livre se verra transformé en hyperlien qui dirigera l'utilisateur sur une recherche google associée au titre du livre.
+  
+  ___
+ 
+Tâches à réaliser pour la *quatrième livraison* :
+ 
+  * SearchCongress: Chaque utilisateur pourra faire une recherche sur le site de la bibliothèque du Congrès après avoir rentré ses critères de recherche.
+  
+  * Puis nous allons modifier GuiSearch afin d'y inclure la fonctionalité ci-dessus.
+  
+  * La bibliothèque ainsi généré pourra être imprimée par l'utilisateur en format poster ou autre grâce a une fonctionalité: PrintPoster.
+  
+  * Enfin s'il nous reste du temps nous souhaitons que le livre recherché par l'utilisateur se mette en surbrillance s'il est présent dans la bibliothèque et développer un système de QR code qui permettra  à l'utilisateur d'avoir accèss à un résumé du livre.
+  
 
