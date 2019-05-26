@@ -1,21 +1,18 @@
 package io.github.oliviercailloux.twod_library.model;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.function.Function;
 
-public interface JavaSearcher {
+public interface JavaSearcher<E, T> {
 	/**
 	 * 
-	 * @param s user search filter
-	 * @return list of book who correspond to the search.
+	 * @param collection represent the set where we will perform the search.
+	 * @param filter     set of filters which will be applied to @param collection
+	 * @param mapper     a set of subroutines who will be call for every element of
+	 *                   set and use for the search
+	 * @return all the element who will correspond for the search
 	 */
-	public List<Book> getResultSearchData(SearchData s);
+	public Collection<E> searchBy(Collection<E> collection, Collection<T> filter,
+			Collection<Function<E, String>> mapper);
 
-	/**
-	 * 
-	 * @param s       user search filter
-	 * @param nbLivre limit the serach to nbLivre
-	 * @return list of book who correspond to the search <= nbLivre.
-	 */
-	public ArrayList<Book> getResultSearchDataLimited(SearchData s, String nbLivre);
 }

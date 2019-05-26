@@ -16,10 +16,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Enumeration;
 import java.util.List;
 
@@ -42,6 +40,7 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.glassfish.jersey.internal.guava.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,10 +49,12 @@ import com.google.common.base.MoreObjects;
 import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
+import io.github.oliviercailloux.twod_library.model.MakeSearch;
 import io.github.oliviercailloux.twod_library.model.SearchData;
 
-
 public class Window2DLibrary extends JFrame {
+
+	private MakeSearch s = new MakeSearch();
 
 	class AddBookButtonListener implements ActionListener {
 
@@ -293,6 +294,7 @@ public class Window2DLibrary extends JFrame {
 			this.setSearchTextField(searchTextField2);
 			this.setQteBookSerach(qteBookSerach);
 		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -303,14 +305,21 @@ public class Window2DLibrary extends JFrame {
 						new ArrayList<String>(Arrays.asList(getSearchTextField().split(" "))),
 						getSearchParamComboBox());
 				try {
+					System.out.println(dataFile.read());
+					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
+					System.out.println("avant" + resultSearch + " taille" + resultSearch.size());
 					if (!getQteBookSerach().equals("Searching Not limitted")) {
-						svgLibrary.setLibrary(
-								new Library(svgLibrary.getLibrary().getResultSearchDataLimited(d, getQteBookSerach()),
-										Integer.parseInt(numberBooksPerShelfTextField.getText())));
-					} else {
-						svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().getResultSearchData(d),
-								Integer.parseInt(numberBooksPerShelfTextField.getText())));
+						Preconditions.checkArgument(Integer.valueOf(getQteBookSerach()) > 0);
+						int indice = (Integer.valueOf(getQteBookSerach()) > resultSearch.size()) ? resultSearch.size()
+								: Integer.valueOf(getQteBookSerach());
+						resultSearch = resultSearch.subList(0, indice);
 					}
+					System.out.println("après" + resultSearch);
+					svgLibrary.setLibrary(
+							new Library(resultSearch, Integer.valueOf(numberBooksPerShelfTextField.getText())));
+					System.out.println("ici");
+					System.out.println(resultSearch);
+
 					if (svgLibrary.getLibrary().getListOfAllTheBooks().size() == 0) {
 						JOptionPane.showMessageDialog(optionsJPanel,
 								"We didn't found anything in your library with these parameter. Library didn't change");
@@ -352,7 +361,6 @@ public class Window2DLibrary extends JFrame {
 		public void setQteBookSerach(JFormattedTextField qteBookSerach) {
 			this.qteBookSerach = qteBookSerach;
 		}
-
 
 	}
 
@@ -673,7 +681,6 @@ public class Window2DLibrary extends JFrame {
 		sortAscendingYearButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAscendingYearButton.setOpaque(false);
 
-
 		numberBooksPerShelfTextField.addFocusListener(new FocusListener() {
 
 			@Override
@@ -983,7 +990,7 @@ public class Window2DLibrary extends JFrame {
 					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		case "Title":
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));	
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));
 
 			break;
 		case "Year":
@@ -992,8 +999,8 @@ public class Window2DLibrary extends JFrame {
 					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		default:
-			 svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
-			 break;
+			svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
+			break;
 
 		}
 		updateDrawingLibrary(svgLibrary);
