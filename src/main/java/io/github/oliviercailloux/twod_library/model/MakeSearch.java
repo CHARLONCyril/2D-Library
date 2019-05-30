@@ -19,8 +19,7 @@ public class MakeSearch implements JavaSearcher<Book, String> {
 		HashSet<Book> books = new HashSet<>();
 		((Collection<Book>) collection).stream()
 				.filter(b -> filter.stream()
-						.anyMatch(sub -> mapper.stream().anyMatch(
-								f -> f.apply(b).contains(sub.toLowerCase()) || f.apply(b).contains(sub.toUpperCase()))))
+						.anyMatch(sub -> mapper.stream().anyMatch(f -> f.apply(b).contains(sub.toLowerCase()))))
 				.forEach(books::add);
 		return books;
 	}
@@ -35,13 +34,14 @@ public class MakeSearch implements JavaSearcher<Book, String> {
 		HashSet<Book> resultSearching = new HashSet<Book>();
 		switch (s.getTypeOfSearch()) {
 		case "auteur":
-			resultSearching = searchBy(collection, s.getSearchCriteria(), new ArrayList<Function<Book, String>>(
-					Arrays.asList(b -> b.getAuthor().getFirstName(), b -> b.getAuthor().getLastName())));
+			resultSearching = searchBy(collection, s.getSearchCriteria(),
+					new ArrayList<Function<Book, String>>(Arrays.asList(b -> b.getAuthor().getFirstName().toLowerCase(),
+							b -> b.getAuthor().getLastName().toLowerCase())));
 			break;
 
 		case "titre":
 			resultSearching = searchBy(collection, s.getSearchCriteria(),
-					new ArrayList<Function<Book, String>>(Arrays.asList(b -> b.getTitle())));
+					new ArrayList<Function<Book, String>>(Arrays.asList(b -> b.getTitle().toLowerCase())));
 			break;
 
 		case "date":
@@ -50,8 +50,9 @@ public class MakeSearch implements JavaSearcher<Book, String> {
 			break;
 		case "tout":
 			resultSearching = searchBy(collection, s.getSearchCriteria(),
-					new ArrayList<Function<Book, String>>(Arrays.asList(b -> b.getAuthor().getFirstName(),
-							b -> b.getAuthor().getLastName(), b -> b.getTitle(), b -> String.valueOf(b.getYear()))));
+					new ArrayList<Function<Book, String>>(Arrays.asList(b -> b.getAuthor().getFirstName().toLowerCase(),
+							b -> b.getAuthor().getLastName().toLowerCase(), b -> b.getTitle().toLowerCase(),
+							b -> String.valueOf(b.getYear()))));
 			break;
 		}
 		return convertToList(resultSearching);

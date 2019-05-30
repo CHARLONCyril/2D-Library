@@ -305,20 +305,15 @@ public class Window2DLibrary extends JFrame {
 						new ArrayList<String>(Arrays.asList(getSearchTextField().split(" "))),
 						getSearchParamComboBox());
 				try {
-					System.out.println(dataFile.read());
 					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
-					System.out.println("avant" + resultSearch + " taille" + resultSearch.size());
 					if (!getQteBookSerach().equals("Searching Not limitted")) {
 						Preconditions.checkArgument(Integer.valueOf(getQteBookSerach()) > 0);
 						int indice = (Integer.valueOf(getQteBookSerach()) > resultSearch.size()) ? resultSearch.size()
 								: Integer.valueOf(getQteBookSerach());
 						resultSearch = resultSearch.subList(0, indice);
 					}
-					System.out.println("après" + resultSearch);
 					svgLibrary.setLibrary(
 							new Library(resultSearch, Integer.valueOf(numberBooksPerShelfTextField.getText())));
-					System.out.println("ici");
-					System.out.println(resultSearch);
 
 					if (svgLibrary.getLibrary().getListOfAllTheBooks().size() == 0) {
 						JOptionPane.showMessageDialog(optionsJPanel,
@@ -886,6 +881,7 @@ public class Window2DLibrary extends JFrame {
 		searchButton.addActionListener(new SearchButtonListener(searchParamComboBox, searchTextField, qteBookSerach));
 		addBookButton.addActionListener(new AddBookButtonListener(colorComboBox, addBookJPanel, bookFormJPanel, tabPane,
 				firstNameTextField, lastNameTextField, titleTextField, yearTextField, dimXTextField, dimYTextField));
+
 		return addBookJPanel;
 
 	}
