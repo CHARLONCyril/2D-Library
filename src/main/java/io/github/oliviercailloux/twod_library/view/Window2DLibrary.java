@@ -3,10 +3,10 @@ package io.github.oliviercailloux.twod_library.view;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -14,9 +14,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-
 import java.util.Enumeration;
 import java.util.List;
 
@@ -27,7 +28,6 @@ import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JFormattedTextField;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -47,8 +47,7 @@ import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 
-
-public class Window2DLibrary extends JFrame {
+public class Window2DLibrary extends Frame {
 
 	class AddBookButtonListener implements ActionListener {
 
@@ -290,6 +289,7 @@ public class Window2DLibrary extends JFrame {
 			this.lastNameTextField = lastNameTextField;
 			this.firstNameTextField = firstNameTextField;
 		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			String line = searchTextField.getText();
@@ -399,14 +399,19 @@ public class Window2DLibrary extends JFrame {
 	 *
 	 * @param title
 	 */
+
 	public Window2DLibrary(String title, SVGLibrary svgLibrary2) {
 
 		super(title);
-		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.dimension();
 		this.initialise();
 		this.setVisible(true);
 		this.svgLibrary = svgLibrary2;
+		addWindowListener(new WindowAdapter() {
+			public void windowClosing(WindowEvent we) {
+				System.exit(0);
+			}
+		});
 
 	}
 
@@ -902,10 +907,10 @@ public class Window2DLibrary extends JFrame {
 	 * creates the panels of the window
 	 */
 	public void initialise() {
-		Container container = this.getContentPane();
-		container.add(this.getSouthPanel(), BorderLayout.SOUTH);
-		container.add(this.getNorthPanel(), BorderLayout.NORTH);
-		container.add(this.getCenterPanel(), BorderLayout.CENTER);
+
+		this.add(this.getSouthPanel(), BorderLayout.SOUTH);
+		this.add(this.getNorthPanel(), BorderLayout.NORTH);
+		this.add(this.getCenterPanel(), BorderLayout.CENTER);
 	}
 
 	/**
@@ -943,8 +948,7 @@ public class Window2DLibrary extends JFrame {
 	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException {
 
 		try {
-			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor,
-					numberBooksPerShelfTextField.getText());
+			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor);
 		} catch (IOException e) {
 			LOGGER.error(
 					"Error when we generateButton the library with ordinary field : Some parameters seems npt ok PLEASE CHECK GENERATE METHOD");
