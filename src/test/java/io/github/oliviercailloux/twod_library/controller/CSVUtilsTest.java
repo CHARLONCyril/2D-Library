@@ -27,8 +27,8 @@ public class CSVUtilsTest {
 
 	@Test
 	public void test_reading_file() {
-		HashMap<String, Map<String, String>> UserSettings = CSVUtils.read("/src/main/resources/controller/",
-				"UserPreference.csv");
+		HashMap<String, Map<String, String>> UserSettings = CSVUtils.read("/src/test/java/io/github/oliviercailloux/twod_library/resources",
+				"UserPreferenceTest.csv");
 		assertEquals(6, UserSettings.size());
 		HashMap<String, String> expectedKey = new HashMap<String, String>();
 		expectedKey.put("Auto", "false");
