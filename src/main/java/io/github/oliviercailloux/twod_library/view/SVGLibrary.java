@@ -86,7 +86,7 @@ public class SVGLibrary {
 	 * @param leaning
 	 * @param string 
 	 */
-	public void generate(boolean leaning, String bkColor, String bColor, String sColor, String string)
+	public void generate(boolean leaning, String bkColor, String bColor, String sColor)
 			throws IOException, ParserConfigurationException {
 
 		int dimCanvasX = (int) ((int) library.getFrameSizeW() - 0.055 * library.getFrameSizeW());

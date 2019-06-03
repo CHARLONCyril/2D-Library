@@ -1,0 +1,6 @@
+Background Color :,Auto,true,Light,false,Dark,false,
+Shelves Color :,Auto,true,Light,false,Dark,false,
+Books Color :,Auto,true,Light,false,Dark,false,
+Position of books :,Not leaned,false,Leaned,true,
+Sort books by :,Auto,false,Year,false,Most recent first (sort by year),false,Author,true,Title,false,
+Books per shelf:,0,19,
