@@ -37,7 +37,7 @@ The code is hereby published under the MIT License, with their permission.
  * Elimination de la redondance de code, utilisation de lambda expressions afin de factoriser le code existant.
  
  * Rechargement automatique de la bibliothèque.
-  
+  ___
  
 Tâches à réaliser pour la *troisième livraison* :
 
