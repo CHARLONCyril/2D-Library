@@ -23,8 +23,8 @@ The code is hereby published under the MIT License, with their permission.
 *2ème livraison*
 
 
-   ** Modification de l'interface JavaSearcher : modification du nom de la méthode getResultSearchData et suppression de la méthode getResultSearchDataLimited.
-   ** Création d'un objet qui fait des recherches.
+ * Modification de l'interface JavaSearcher : modification du nom de la méthode getResultSearchData et suppression de la méthode getResultSearchDataLimited.
+ * Création d'un objet qui fait des recherches.
 
  * Interface 2 : développement d'une classe SimpleSearcher qui implémente l'interface que nous avons utilisée lors de la première livraison JavaSearcher. On lui fourni une liste de livres qu'il cherche dans la bibliothèque déjà existante. 
  
@@ -37,7 +37,9 @@ The code is hereby published under the MIT License, with their permission.
  * Elimination de la redondance de code, utilisation de lambda expressions afin de factoriser le code existant.
  
  * Rechargement automatique de la bibliothèque.
+ 
   ___
+ 
  
 Tâches à réaliser pour la *troisième livraison* :
 
@@ -52,7 +54,9 @@ Tâches à réaliser pour la *troisième livraison* :
   * DrawLinks : chaque livre se verra transformé en hyperlien qui dirigera l'utilisateur sur une recherche google associée au titre du livre.
   
   * SearchCongress: Chaque utilisateur pourra faire une recherche sur le site de la bibliothèque du Congrès après avoir rentré ses critères de recherche.
+  
   ___
+ 
  
 Tâches à réaliser pour la *quatrième livraison* :
  
