@@ -38,15 +38,18 @@ The code is hereby published under the MIT License, with their permission.
  
  * Rechargement automatique de la bibliothèque.
   
-  ___
  
 Tâches à réaliser pour la *troisième livraison* :
+
+  * Intégration des remarques sur l'itération précédente :
+    - Utilisation de SWT à la place de AWT
+    - Modification de la classe SearchData pour intégrer 3 attributs (AuthorRegExp : Recherche sur le nom de l'autheur; pubRange : intervalle de date de publication; titleRegExp : Recherche sur le titre) ce qui permettra une recherche plus poussée que celle qui existe actuellement. La GUI devra évoluer pour intégrer ces trois attributs (1 champs pour l'autheur, 1 champs pour le titre et 2 champs pour l'intervalle de date).
  
   * File2 : Nous voulons qu'il soit possible de déterminer l'épaisseur de chaque livre au lieu de fournir une hauteur et largeur pour avoir une représentation graphique plus réaliste.
   
-  * Puis nous allons réaliser Ressource1 qui va permmettre d'inclure un fichier image illustrant le projet et Ressource2 qui permettra d'obtenir un aperçu d'une bibliothèque par défaut sans que l'utilisateur n'ai à cliquer sur "générer ma bibliothèque". 
+  * Ressource1 : ajout d'une image illustrant le projet. 
   
-  * Pour finir chaque livre se verra transformé en hyperlien qui dirigera l'utilisateur sur une recherche google associée au titre du livre.
+  * DrawLinks : chaque livre se verra transformé en hyperlien qui dirigera l'utilisateur sur une recherche google associée au titre du livre.
   
   * SearchCongress: Chaque utilisateur pourra faire une recherche sur le site de la bibliothèque du Congrès après avoir rentré ses critères de recherche.
   ___
@@ -54,10 +57,8 @@ Tâches à réaliser pour la *troisième livraison* :
 Tâches à réaliser pour la *quatrième livraison* :
  
 
-  * Puis nous allons modifier GuiSearch afin d'y inclure la fonctionnalité SearchCongress (itération précédente).
+  * Modification de GuiSearch afin d'y inclure la fonctionnalité SearchCongress (itération précédente).
   
   * La bibliothèque générée pourra être imprimée par l'utilisateur en format poster ou autre grâce a une fonctionalité: PrintPoster.
   
   * Enfin s'il nous reste du temps nous souhaitons que le livre recherché par l'utilisateur se mette en surbrillance s'il est présent dans la bibliothèque et développer un système de QR code qui permettra  à l'utilisateur d'avoir accèss à un résumé du livre.
-  
-
