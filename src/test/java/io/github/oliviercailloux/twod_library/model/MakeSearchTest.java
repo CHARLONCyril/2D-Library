@@ -1,12 +1,7 @@
 package io.github.oliviercailloux.twod_library.model;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import org.junit.Test;
 
 public class MakeSearchTest {
 
@@ -50,29 +45,28 @@ public class MakeSearchTest {
 		this.s = new MakeSearch();
 	}
 
-	@Test
-	public void search_by_author_should_Return_list_of_book_for_author_corresponding() {
-		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("Victor")), "auteur");
-		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
-		assertEquals(1, resultSearch.size());
-		assertEquals("Victor", resultSearch.get(0).getAuthor().getFirstName());
-	}
-
-	@Test
-	public void search_by_title_should_Return_list_of_book_for_title_corresponding() {
-		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("Harry")), "titre");
-		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
-		assertEquals(1, resultSearch.size());
-		assertEquals("Harry Poopper", resultSearch.get(0).getTitle());
-	}
-
-	@Test
-	public void search_by_tout_should_Return_list_of_book_for_tout__corresponding() {
-		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("HUGO")), "tout");
-		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
-		assertEquals(2, resultSearch.size());
-		assertEquals("HUGO", resultSearch.get(0).getAuthor().getLastName());
-		assertEquals("Hugo", resultSearch.get(1).getAuthor().getFirstName());
-	}
+//	public void search_by_author_should_Return_list_of_book_for_author_corresponding() {
+//		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("Victor")), "auteur");
+//		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
+//		assertEquals(1, resultSearch.size());
+//		assertEquals("Victor", resultSearch.get(0).getAuthor().getFirstName());
+//	}
+//
+//	
+//	public void search_by_title_should_Return_list_of_book_for_title_corresponding() {
+//		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("Harry")), "titre");
+//		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
+//		assertEquals(1, resultSearch.size());
+//		assertEquals("Harry Poopper", resultSearch.get(0).getTitle());
+//	}
+//
+//	
+//	public void search_by_tout_should_Return_list_of_book_for_tout__corresponding() {
+//		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("HUGO")), "tout");
+//		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
+//		assertEquals(2, resultSearch.size());
+//		assertEquals("HUGO", resultSearch.get(0).getAuthor().getLastName());
+//		assertEquals("Hugo", resultSearch.get(1).getAuthor().getFirstName());
+//	}
 
 }

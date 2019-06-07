@@ -16,8 +16,6 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
 
@@ -47,9 +45,11 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.MoreObjects;
 
 import io.github.oliviercailloux.twod_library.controller.DataFile;
+import io.github.oliviercailloux.twod_library.model.Author;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 import io.github.oliviercailloux.twod_library.model.MakeSearch;
+import io.github.oliviercailloux.twod_library.model.PublicationRange;
 import io.github.oliviercailloux.twod_library.model.SearchData;
 
 public class Window2DLibrary extends JFrame {
@@ -301,9 +301,10 @@ public class Window2DLibrary extends JFrame {
 			if (getSearchTextField().equals("")) {
 				JOptionPane.showMessageDialog(optionsJPanel, "Give some search criteria");
 			} else {
-				SearchData d = SearchData.createSearchDataFilter(
-						new ArrayList<String>(Arrays.asList(getSearchTextField().split(" "))),
-						getSearchParamComboBox());
+				System.out.println("tititi");
+				SearchData d = SearchData.createSearchDataObject(new Author("Hugo", "Victor"),
+						new PublicationRange(2019, 2020), null);
+
 				try {
 					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
 					if (!getQteBookSerach().equals("Searching Not limitted")) {

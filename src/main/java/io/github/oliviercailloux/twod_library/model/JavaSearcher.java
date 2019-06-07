@@ -3,7 +3,7 @@ package io.github.oliviercailloux.twod_library.model;
 import java.util.Collection;
 import java.util.function.Function;
 
-public interface JavaSearcher<E, T> {
+public interface JavaSearcher<E, T, W, R> {
 	/**
 	 * 
 	 * @param collection represent the set where we will perform the search.
@@ -12,7 +12,9 @@ public interface JavaSearcher<E, T> {
 	 *                   set and use for the search
 	 * @return all the element who will correspond for the search
 	 */
-	public Collection<E> searchBy(Collection<E> collection, Collection<T> filter,
-			Collection<Function<E, String>> mapper);
+
+	public Collection<E> searchByString(Collection<E> collection, Collection<Function<T, W>> filter);
+
+	public Collection<E> searchByInterval(Collection<E> collection, Function<T, R> filter);
 
 }
