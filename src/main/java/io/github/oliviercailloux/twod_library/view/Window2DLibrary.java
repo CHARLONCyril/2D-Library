@@ -16,6 +16,7 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -257,10 +258,20 @@ public class Window2DLibrary extends JFrame {
 
 					}
 
-					CSVUtils.writeCSVFile("UserPreference.csv", "/src/main/resources/controller/", csvFile);
+					CSVUtils.writeIntoCSVFile("UserPreference.csv", csvFile);
 				} catch (ParserConfigurationException ex) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
-					ex.printStackTrace();
+					try {
+						throw ex;
+					} catch (ParserConfigurationException ex1) {
+						ex1.printStackTrace();
+					}
+				} catch (URISyntaxException e1) {
+					try {
+						throw e1;
+					} catch (URISyntaxException e2) {
+						e2.printStackTrace();
+					}
 				}
 			}
 
@@ -454,8 +465,7 @@ public class Window2DLibrary extends JFrame {
 	private JTextField searchTextField, firstNameTextField, lastNameTextField, titleTextField, yearTextField,
 			dimXTextField, dimYTextField;
 
-	private HashMap<String, Map<String, String>> UserSettings = CSVUtils.read("/src/main/resources/controller/",
-			"UserPreference.csv");
+	private HashMap<String, Map<String, String>> UserSettings;
 
 	private JCheckBox sortAscendingYearButton;
 
@@ -489,21 +499,30 @@ public class Window2DLibrary extends JFrame {
 	 * constructor of the window
 	 *
 	 * @param title
+	 * @throws ParserConfigurationException
+	 * @throws URISyntaxException
 	 */
-	public Window2DLibrary(String title, SVGLibrary svgLibrary2) {
+	public Window2DLibrary(String title, SVGLibrary svgLibrary2)
+			throws ParserConfigurationException, URISyntaxException {
 
 		super(title);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.dimension();
-		this.initialise();
-		this.setVisible(true);
 		this.svgLibrary = svgLibrary2;
+		try {
+			this.UserSettings = CSVUtils.parseCSVFile("UserPreference.csv");
+		} catch (URISyntaxException e) {
+			LOGGER.error("Unabled to find UserPreference.csv");
+			throw e;
+		}
+		this.initialise();
 		try {
 			updateSVGLibrary();
 		} catch (ParserConfigurationException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.error("Unabled to update SVG library");
+			throw e;
 		}
+		this.setVisible(true);
 
 	}
 
@@ -606,13 +625,10 @@ public class Window2DLibrary extends JFrame {
 		sortTitleJLabel.setFont(new Font("Book Antiqua", Font.ITALIC, 25));
 		JLabel numberBooksPerShelfTitleJLabel = new JLabel("Books per shelf:");
 		numberBooksPerShelfTitleJLabel.setFont(new Font("Book Antiqua", Font.ITALIC, 25));
-		// System.out.println(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0"));
-
 		nbBooksPerShelf = (Integer.valueOf(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0")) <= 20
 				&& Integer.valueOf(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0")) >= 5)
 						? Integer.valueOf(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0"))
 						: 10;
-		// System.out.println(nbBooksPerShelf);
 		numberBooksPerShelfTextField = new JFormattedTextField(nbBooksPerShelf);
 		JLabel titleSecondColumn = new JLabel("Choices");
 		choice.setOpaque(false);
@@ -679,7 +695,6 @@ public class Window2DLibrary extends JFrame {
 		bLightS.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bDarkS.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bAutoS.setOpaque(false);
-		// System.out.println(UserSettings.get(shelvesColorTitleJLabel.getText()));
 		bAutoS.setSelected(Boolean.valueOf(UserSettings.get(shelvesColorTitleJLabel.getText()).get(bAutoS.getText())));
 		bLightS.setOpaque(false);
 		bLightS.setSelected(
@@ -716,7 +731,6 @@ public class Window2DLibrary extends JFrame {
 		} else {
 			bookColor = bDarkS.getActionCommand();
 		}
-
 		bAutoB.addActionListener(new BooksColorButtonListener(bAutoB, bLightB, bDarkB));
 		bLightB.addActionListener(new BooksColorButtonListener(bAutoB, bLightB, bDarkB));
 		bDarkB.addActionListener(new BooksColorButtonListener(bAutoB, bLightB, bDarkB));
@@ -841,9 +855,7 @@ public class Window2DLibrary extends JFrame {
 			}
 
 			private void setFieldValue(int value) {
-				System.out.println("ici");
 				numberBooksPerShelfTextField.setText(String.valueOf(value));
-				System.out.println(numberBooksPerShelfTextField.getText());
 			}
 
 			private int getFieldValue() {

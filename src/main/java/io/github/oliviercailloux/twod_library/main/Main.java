@@ -1,6 +1,7 @@
 package io.github.oliviercailloux.twod_library.main;
 
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -16,11 +17,15 @@ public class Main {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(Main.class);
 
-	public static void main(String[] args) throws IOException, ParserConfigurationException {
+	public static void main(String[] args) throws IOException, ParserConfigurationException, URISyntaxException {
 		DataFile dataFile = new DataFile();
 		Library library = new Library(dataFile.read(), 18);
 		SVGLibrary svgLibrary = new SVGLibrary(library);
-		new Window2DLibrary("2D_LIBRARY PROJECT", svgLibrary);
+		try {
+			new Window2DLibrary("2D_LIBRARY PROJECT", svgLibrary);
+		} catch (URISyntaxException e) {
+			throw e;
+		}
 	}
 
 }

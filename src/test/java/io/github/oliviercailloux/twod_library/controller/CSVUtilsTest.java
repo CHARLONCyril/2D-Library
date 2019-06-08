@@ -2,6 +2,8 @@ package io.github.oliviercailloux.twod_library.controller;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,32 +11,33 @@ import java.util.Map;
 import org.junit.Test;
 
 public class CSVUtilsTest {
-	private static final char DEFAULT_SEPARATOR = ',';
-	private static final char DEFAULT_QUOTE = '"';
 
-	@Test
-	public void test_parsing_line() {
-
-		String line = "Background Color :,Auto,false";
-		List<String> result = CSVUtils.parseLine(line, DEFAULT_SEPARATOR, DEFAULT_QUOTE);
-
-		assertEquals(3, result.size());
-		assertEquals("Background Color :", result.get(0));
-		assertEquals("Auto", result.get(1));
-		assertEquals("false", result.get(2));
-
+	public void test_parseCSVFile() throws URISyntaxException {
+		HashMap<String, Map<String, String>> UserSettings;
+		try {
+			UserSettings = CSVUtils.parseCSVFile("UserPreferenceTest.csv");
+		} catch (URISyntaxException e) {
+			throw e;
+		}
+		assertEquals(1, UserSettings.size());
+		HashMap<String, String> expectedKey = new HashMap<String, String>();
+		expectedKey.put("Auto", "true");
+		expectedKey.put("Light", "false");
+		expectedKey.put("Dark", "false");
+		assertEquals(UserSettings.get("Background Color :").toString(), expectedKey.toString());
 	}
 
 	@Test
-	public void test_reading_file() {
-		HashMap<String, Map<String, String>> UserSettings = CSVUtils.read("/src/test/java/io/github/oliviercailloux/twod_library/resources",
-				"UserPreferenceTest.csv");
-		assertEquals(6, UserSettings.size());
-		HashMap<String, String> expectedKey = new HashMap<String, String>();
-		expectedKey.put("Auto", "false");
-		expectedKey.put("Light", "true");
-		expectedKey.put("Dark", "false");
-		assertEquals(UserSettings.get("Background Color :").toString(), expectedKey.toString());
+	public void test_writeIntoCSVFile() throws URISyntaxException {
+
+		List<List<String>> expected = Arrays
+				.asList(Arrays.asList("Background Color :", "Auto", "true", "Light", "false", "Dark", "false"));
+		try {
+			CSVUtils.writeIntoCSVFile("UserPreferenceTest.csv", expected);
+		} catch (URISyntaxException e) {
+			throw e;
+		}
+		test_parseCSVFile();
 	}
 
 }
