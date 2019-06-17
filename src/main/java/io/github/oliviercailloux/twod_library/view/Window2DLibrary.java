@@ -25,6 +25,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -45,7 +46,6 @@ import org.slf4j.LoggerFactory;
 import com.google.common.base.MoreObjects;
 
 import io.github.oliviercailloux.twod_library.controller.DataFile;
-import io.github.oliviercailloux.twod_library.model.Author;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 import io.github.oliviercailloux.twod_library.model.MakeSearch;
@@ -284,9 +284,9 @@ public class Window2DLibrary extends JFrame {
 
 	class SearchButtonListener implements ActionListener {
 
-		private JTextField searchTextField;
 		private JComboBox<String> searchParamComboBox;
 		private JFormattedTextField qteBookSerach;
+		private JTextField searchTextField;
 
 		public SearchButtonListener(JComboBox<String> searchParamComboBox2, JTextField searchTextField2,
 				JFormattedTextField qteBookSerach) {
@@ -302,8 +302,7 @@ public class Window2DLibrary extends JFrame {
 				JOptionPane.showMessageDialog(optionsJPanel, "Give some search criteria");
 			} else {
 				System.out.println("tititi");
-				SearchData d = SearchData.createSearchDataObject(new Author("Hugo", "Victor"),
-						new PublicationRange(2019, 2020), null);
+				SearchData d = SearchData.createSearchDataObject("hugo", new PublicationRange(2001, 2002), null);
 
 				try {
 					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
@@ -850,10 +849,6 @@ public class Window2DLibrary extends JFrame {
 		bookFormJPanel.add(titleSecondColumn);
 		bookFormJPanel.add(searchJLabel);
 
-		String[] searchParam = { "tout", "auteur", "titre", "date" };
-
-		final JComboBox<String> searchParamComboBox = new JComboBox<>(searchParam);
-		searchJPanel.add(searchParamComboBox);
 		searchJPanel.add(searchTextField);
 		JFormattedTextField qteBookSerach = new JFormattedTextField("Searching Not limitted");
 
@@ -879,7 +874,7 @@ public class Window2DLibrary extends JFrame {
 		JButton addBookButton = new JButton("Add");
 		bookFormJPanel.add(addBookButton);
 		addBookJPanel.add(bookFormJPanel);
-		searchButton.addActionListener(new SearchButtonListener(searchParamComboBox, searchTextField, qteBookSerach));
+		searchButton.addActionListener(new SearchButtonListener(colorComboBox, searchTextField, qteBookSerach));
 		addBookButton.addActionListener(new AddBookButtonListener(colorComboBox, addBookJPanel, bookFormJPanel, tabPane,
 				firstNameTextField, lastNameTextField, titleTextField, yearTextField, dimXTextField, dimYTextField));
 
@@ -944,7 +939,10 @@ public class Window2DLibrary extends JFrame {
 		myLibIcon = new ImageIcon("");
 		libImage.setIcon(myLibIcon);
 		JScrollPane scrollPane = new JScrollPane(libImage);
-		pCenter.add(scrollPane);
+		JEditorPane ed1 = new JEditorPane("text/html", "<html><img src='" + myLibIcon + "' width=200height=200></img>");
+		scrollPane.add(ed1);
+		// pCenter.add(java.awt.Desktop.getDesktop().open(new
+		// File(libImage.getText()).getPath()));
 		return pCenter;
 	}
 
