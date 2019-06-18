@@ -8,7 +8,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,7 +24,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JEditorPane;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -186,6 +184,42 @@ public class Window2DLibrary extends JFrame {
 		}
 	}
 
+	class PlaceHolder implements FocusListener {
+		private JTextField textArea;
+		private String message;
+
+		public PlaceHolder(JTextField t, String m) {
+			textArea = t;
+			message = m;
+
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (getTextArea().getText().trim().equals("")) {
+				getTextArea().setText(getMessage());
+			}
+
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			if (getTextArea().getText().trim().equals(getMessage())) {
+				getTextArea().setText("");
+			}
+
+		}
+
+		public JTextField getTextArea() {
+			return textArea;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+	}
+
 	class BooksColorButtonListener implements ActionListener {
 
 		private JRadioButton bAutoB, bLightB, bDarkB;
@@ -285,25 +319,40 @@ public class Window2DLibrary extends JFrame {
 	class SearchButtonListener implements ActionListener {
 
 		private JComboBox<String> searchParamComboBox;
-		private JFormattedTextField qteBookSerach;
-		private JTextField searchTextField;
+		private JTextField qteBookSerach;
+		private JTextField searchAuthorField;
+		private JTextField searchTitleField;
+		private JTextField minRangeField;
+		private JTextField maxRangeField;
 
-		public SearchButtonListener(JComboBox<String> searchParamComboBox2, JTextField searchTextField2,
-				JFormattedTextField qteBookSerach) {
+		public SearchButtonListener(JComboBox<String> searchParamComboBox2, JTextField searchAuthorField,
+				JTextField searchTitleField, JTextField minRangeField, JTextField maxRangeField,
+				JTextField qteBookSerach2) {
 			this.setSearchParamComboBox(searchParamComboBox2);
-			this.setSearchTextField(searchTextField2);
-			this.setQteBookSerach(qteBookSerach);
+			this.setSearchAuthorField(searchAuthorField);
+			this.setSearchTitleField(searchTitleField);
+			this.setMinRangeField(minRangeField);
+			this.setMaxRangeField(maxRangeField);
+			this.setQteBookSerach(qteBookSerach2);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-
-			if (getSearchTextField().equals("")) {
+			if (getSearchAuthorField().equals("Author") && getSearchTitleField().equals("Title")
+					&& getMinRangeField().equals("FROM") && getMaxRangeField().equals("TO")) {
 				JOptionPane.showMessageDialog(optionsJPanel, "Give some search criteria");
 			} else {
-				System.out.println("tititi");
-				SearchData d = SearchData.createSearchDataObject("hugo", new PublicationRange(2001, 2002), null);
-
+				SearchData d = SearchData.createSearchDataObject(
+						getSearchAuthorField().equals("Author") ? null : getSearchAuthorField(),
+						new PublicationRange(
+								!getMinRangeField().equals("FROM") && Integer.valueOf(getMinRangeField()) > 0
+										? Integer.valueOf(getMinRangeField())
+										: null,
+								!getMaxRangeField().equals("TO") && Integer.valueOf(getMaxRangeField()) > 0
+										? Integer.valueOf(getMaxRangeField())
+										: null),
+						getSearchTitleField().equals("Title") ? null : getSearchTitleField());
+				System.out.println(d);
 				try {
 					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
 					if (!getQteBookSerach().equals("Searching Not limitted")) {
@@ -328,12 +377,12 @@ public class Window2DLibrary extends JFrame {
 			}
 		}
 
-		public String getSearchTextField() {
-			return searchTextField.getText();
+		public String getSearchAuthorField() {
+			return searchAuthorField.getText();
 		}
 
-		public void setSearchTextField(JTextField searchTextField) {
-			this.searchTextField = searchTextField;
+		public void setSearchAuthorField(JTextField searchTextField) {
+			this.searchAuthorField = searchTextField;
 		}
 
 		public String getSearchParamComboBox() {
@@ -344,8 +393,17 @@ public class Window2DLibrary extends JFrame {
 			this.searchParamComboBox = searchParamComboBox;
 		}
 
+		public String getUserSearch() {
+			String msg = "";
+			if (getSearchAuthorField() != null)
+				msg += " " + getSearchAuthorField();
+			if (getSearchTitleField() != null)
+				msg += " " + getSearchTitleField();
+			return msg;
+		}
+
 		public String toString() {
-			return MoreObjects.toStringHelper(this).add("User Search", getSearchTextField())
+			return MoreObjects.toStringHelper(this).add("User Search", getUserSearch())
 					.add("Type of search", getSearchParamComboBox()).toString();
 		}
 
@@ -353,8 +411,32 @@ public class Window2DLibrary extends JFrame {
 			return qteBookSerach.getText();
 		}
 
-		public void setQteBookSerach(JFormattedTextField qteBookSerach) {
-			this.qteBookSerach = qteBookSerach;
+		public void setQteBookSerach(JTextField qteBookSerach2) {
+			this.qteBookSerach = qteBookSerach2;
+		}
+
+		public String getSearchTitleField() {
+			return searchTitleField.getText();
+		}
+
+		public void setSearchTitleField(JTextField searchTitleField) {
+			this.searchTitleField = searchTitleField;
+		}
+
+		public String getMinRangeField() {
+			return minRangeField.getText();
+		}
+
+		public void setMinRangeField(JTextField minRangeField) {
+			this.minRangeField = minRangeField;
+		}
+
+		public String getMaxRangeField() {
+			return maxRangeField.getText();
+		}
+
+		public void setMaxRangeField(JTextField maxRangeField) {
+			this.maxRangeField = maxRangeField;
 		}
 
 	}
@@ -417,8 +499,8 @@ public class Window2DLibrary extends JFrame {
 
 	private JPanel pCenter, addBookJPanel, optionsJPanel;
 
-	private JTextField searchTextField, firstNameTextField, lastNameTextField, titleTextField, yearTextField,
-			dimXTextField, dimYTextField;
+	private JTextField searchAuthorField, searchTitleField, minRangeField, maxRangeField, firstNameTextField,
+			lastNameTextField, titleTextField, yearTextField, dimXTextField, dimYTextField;
 
 	private JCheckBox sortAscendingYearButton;
 
@@ -527,7 +609,6 @@ public class Window2DLibrary extends JFrame {
 		final int CAPACITY_MIN_PER_SHELF = 5;
 		final int CAPACITY_MAX_PER_SHELF = 20;
 		optionsJPanel = new JPanel();
-		Image image = null;
 		JPanel optionsNames = new JPanel(new GridLayout(0, 2, 40, 30));
 		JPanel parameters = new JPanel();
 		JPanel choice = new JPanel();
@@ -825,10 +906,18 @@ public class Window2DLibrary extends JFrame {
 
 		JLabel titleSecondColumn = new JLabel("");
 		titleSecondColumn.setFont(new Font("Arial", Font.ITALIC, 50));
-		searchTextField = new JTextField();
-		searchTextField.setBounds(10, 10, 200, 200);
-		searchTextField.setPreferredSize(new Dimension(160, 40));
-
+		searchAuthorField = new JTextField("Author");
+		searchAuthorField.setColumns(10);
+		searchAuthorField.addFocusListener(new PlaceHolder(searchAuthorField, searchAuthorField.getText()));
+		searchTitleField = new JTextField("Title");
+		searchTitleField.setColumns(10);
+		searchTitleField.addFocusListener(new PlaceHolder(searchTitleField, searchTitleField.getText()));
+		minRangeField = new JTextField("FROM");
+		minRangeField.setColumns(5);
+		minRangeField.addFocusListener(new PlaceHolder(minRangeField, minRangeField.getText()));
+		maxRangeField = new JTextField("TO");
+		maxRangeField.setColumns(5);
+		maxRangeField.addFocusListener(new PlaceHolder(maxRangeField, maxRangeField.getText()));
 		JButton searchButton = new JButton("Search");
 		firstNameTextField = new JTextField();
 		firstNameTextField.setBounds(5, 5, 200, 200);
@@ -849,13 +938,18 @@ public class Window2DLibrary extends JFrame {
 		bookFormJPanel.add(titleSecondColumn);
 		bookFormJPanel.add(searchJLabel);
 
-		searchJPanel.add(searchTextField);
-		JFormattedTextField qteBookSerach = new JFormattedTextField("Searching Not limitted");
-
+		searchJPanel.add(searchAuthorField);
+		searchJPanel.add(searchTitleField);
+		searchJPanel.add(minRangeField);
+		searchJPanel.add(maxRangeField);
+		JTextField qteBookSerach = new JTextField("Searching Not limitted");
+		qteBookSerach.setColumns(15);
+		qteBookSerach.addFocusListener(new PlaceHolder(qteBookSerach, qteBookSerach.getText()));
 		searchJPanel.add(qteBookSerach);
 
 		searchJPanel.add(searchButton);
 		bookFormJPanel.add(searchJPanel);
+
 		bookFormJPanel.add(firstNameJLabel);
 		bookFormJPanel.add(firstNameTextField);
 		bookFormJPanel.add(lastNameJLabel);
@@ -874,7 +968,8 @@ public class Window2DLibrary extends JFrame {
 		JButton addBookButton = new JButton("Add");
 		bookFormJPanel.add(addBookButton);
 		addBookJPanel.add(bookFormJPanel);
-		searchButton.addActionListener(new SearchButtonListener(colorComboBox, searchTextField, qteBookSerach));
+		searchButton.addActionListener(new SearchButtonListener(colorComboBox, searchAuthorField, searchTitleField,
+				minRangeField, maxRangeField, qteBookSerach));
 		addBookButton.addActionListener(new AddBookButtonListener(colorComboBox, addBookJPanel, bookFormJPanel, tabPane,
 				firstNameTextField, lastNameTextField, titleTextField, yearTextField, dimXTextField, dimYTextField));
 
@@ -939,10 +1034,7 @@ public class Window2DLibrary extends JFrame {
 		myLibIcon = new ImageIcon("");
 		libImage.setIcon(myLibIcon);
 		JScrollPane scrollPane = new JScrollPane(libImage);
-		JEditorPane ed1 = new JEditorPane("text/html", "<html><img src='" + myLibIcon + "' width=200height=200></img>");
-		scrollPane.add(ed1);
-		// pCenter.add(java.awt.Desktop.getDesktop().open(new
-		// File(libImage.getText()).getPath()));
+		pCenter.add(scrollPane);
 		return pCenter;
 	}
 

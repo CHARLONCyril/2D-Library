@@ -29,6 +29,17 @@ public class PublicationRange {
 
 	}
 
+	public boolean checkRange(int year) {
+		if (getMinRange() == null && getMaxRange() == null)
+			return false;
+		else if (getMinRange() == null)
+			return getMaxRange() >= year;
+		else if (getMaxRange() == null)
+			return getMinRange() <= year;
+		else
+			return getMinRange() <= year && year <= getMaxRange();
+	}
+
 	public String toString() {
 		return MoreObjects.toStringHelper(this).add("minRange", getMinRange()).add("maxRange", getMaxRange())
 				.toString();

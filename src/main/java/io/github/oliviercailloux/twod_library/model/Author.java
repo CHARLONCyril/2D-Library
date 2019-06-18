@@ -50,9 +50,13 @@ public class Author {
 			return false;
 		}
 		Author castedAuthor = (Author) author;
-		System.out.println(castedAuthor);
 		return this.lastName.equalsIgnoreCase(castedAuthor.lastName)
 				&& this.firstName.equalsIgnoreCase(castedAuthor.firstName);
+	}
+
+	public boolean checkAuthorRegex(String regex) {
+		return this.lastName.toLowerCase().contains(regex.toLowerCase())
+				|| this.firstName.toLowerCase().contains(regex.toLowerCase());
 	}
 
 	/**

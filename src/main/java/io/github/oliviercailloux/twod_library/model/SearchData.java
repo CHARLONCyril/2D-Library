@@ -1,5 +1,7 @@
 package io.github.oliviercailloux.twod_library.model;
 
+import org.glassfish.jersey.internal.guava.MoreObjects;
+
 public final class SearchData {
 
 	private final String authorRegex;
@@ -27,6 +29,12 @@ public final class SearchData {
 	public static SearchData createSearchDataObject(String authorRegex, PublicationRange publication,
 			String titleRegex) {
 		return new SearchData(authorRegex, publication, titleRegex);
+	}
+
+	public String toString() {
+
+		return MoreObjects.toStringHelper(this).add("authorRegex", getAuthorRegex())
+				.add("publication", getPublication()).add("titleRegex", getTitleRegex()).toString();
 	}
 
 }

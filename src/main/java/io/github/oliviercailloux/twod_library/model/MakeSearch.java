@@ -19,14 +19,10 @@ public class MakeSearch implements JavaSearcher<Book, SearchData, String, Intege
 		HashSet<Book> resultSearching = new HashSet<Book>();
 		if (s.getAuthorRegex() != null)
 			resultSearching = search(collection, "author", s.getAuthorRegex());
-		System.out.println(resultSearching);
-		System.out.println(s.getPublication());
 		if (s.getTitleRegex() != null)
-			resultSearching = (HashSet<Book>) intersection(resultSearching,
-					search(collection, "title", s.getTitleRegex()));
-		if (s.getPublication() != null)
+			resultSearching = intersection(resultSearching, search(collection, "title", s.getTitleRegex()));
+		if (s.getPublication().getMinRange() != null || s.getPublication().getMaxRange() != null)
 			resultSearching = intersection(resultSearching, search(collection, "date", s.getPublication()));
-		System.out.println(resultSearching);
 		return (List<Book>) convertToList(resultSearching);
 
 	}
@@ -35,18 +31,14 @@ public class MakeSearch implements JavaSearcher<Book, SearchData, String, Intege
 	public HashSet<Book> search(Collection<Book> collection, String filter, Object value) {
 		HashSet<Book> books = new HashSet<>();
 		if (filter == "author") {
-			collection.stream()
-					.filter(b -> b.getAuthor().getFirstName().toLowerCase().contains(value.toString())
-							|| b.getAuthor().getLastName().toLowerCase().contains(value.toString()))
-					.forEach(books::add);
+			collection.stream().filter(b -> b.getAuthor().checkAuthorRegex(value.toString())).forEach(books::add);
 		}
 
 		else if (filter == "title") {
 			collection.stream().filter(b -> b.getTitle().toLowerCase().contains(value.toString())).forEach(books::add);
 		} else {
 			PublicationRange p = (PublicationRange) value;
-			collection.stream().filter(b -> b.getYear() >= p.getMinRange() && b.getYear() <= p.getMaxRange())
-					.forEach(books::add);
+			collection.stream().filter(b -> p.checkRange(b.getYear())).forEach(books::add);
 		}
 		return books;
 	}
