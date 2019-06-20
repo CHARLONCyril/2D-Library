@@ -39,8 +39,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.event.HyperlinkEvent;
-import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -1053,31 +1051,11 @@ public class Window2DLibrary<HTLMEditorKit> extends JFrame {
 
 		String imgsrc = "file:" + DataFile.class.getResource("library.html").toURI().getPath();
 		svgCanvas.setURI(imgsrc);
-		File f = new File(DataFile.class.getResource("library.svg").toURI().getPath());
-		HyperlinkListener listener = new HyperlinkListener() {
-			@Override
-			public void hyperlinkUpdate(HyperlinkEvent hyperLink) {
-				if (HyperlinkEvent.EventType.ACTIVATED.equals(hyperLink.getEventType())) {
-					try {
-						String urlWithEncodedSpaces = hyperLink.getURL().toString().replaceAll(" ", "%20");
-						Desktop.getDesktop().browse(new URI(urlWithEncodedSpaces).toURL().toURI());
-					} catch (Exception e) {
-						LOGGER.error("Wrong URL" + hyperLink.getURL().toString());
-						e.printStackTrace();
-					}
-
-				}
-			}
-
-		};
-
 		svgCanvas.addLinkActivationListener(new LinkActivationListener() {
 
 			@Override
 			public void linkActivated(LinkActivationEvent e) {
 				try {
-					System.out.println(e.getReferencedURI());
-					System.out.println(e.getSource());
 					String urlWithEncodedSpaces = e.getReferencedURI().toString().replaceAll(" ", "%20");
 					Desktop.getDesktop().browse(new URI(urlWithEncodedSpaces).toURL().toURI());
 				} catch (Exception e1) {
