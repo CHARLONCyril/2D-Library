@@ -344,7 +344,7 @@ public class Window2DLibrary extends JFrame {
 			} else {
 				SearchData d = SearchData.createSearchDataObject(
 						getSearchAuthorField().equals("Author") ? null : getSearchAuthorField(),
-						new PublicationRange(
+						PublicationRange.createPublicationRange(
 								!getMinRangeField().equals("FROM") && Integer.valueOf(getMinRangeField()) > 0
 										? Integer.valueOf(getMinRangeField())
 										: null,
@@ -352,7 +352,6 @@ public class Window2DLibrary extends JFrame {
 										? Integer.valueOf(getMaxRangeField())
 										: null),
 						getSearchTitleField().equals("Title") ? null : getSearchTitleField());
-				System.out.println(d);
 				try {
 					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
 					if (!getQteBookSerach().equals("Searching Not limitted")) {

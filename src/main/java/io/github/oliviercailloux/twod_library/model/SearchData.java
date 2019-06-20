@@ -31,6 +31,9 @@ public final class SearchData {
 		return new SearchData(authorRegex, publication, titleRegex);
 	}
 
+	/**
+	 * using to represent the object SearchData
+	 */
 	public String toString() {
 
 		return MoreObjects.toStringHelper(this).add("authorRegex", getAuthorRegex())

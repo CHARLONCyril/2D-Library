@@ -1,7 +1,11 @@
 package io.github.oliviercailloux.twod_library.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import org.junit.Test;
 
 public class MakeSearchTest {
 
@@ -45,28 +49,52 @@ public class MakeSearchTest {
 		this.s = new MakeSearch();
 	}
 
-//	public void search_by_author_should_Return_list_of_book_for_author_corresponding() {
-//		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("Victor")), "auteur");
-//		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
-//		assertEquals(1, resultSearch.size());
-//		assertEquals("Victor", resultSearch.get(0).getAuthor().getFirstName());
-//	}
-//
-//	
-//	public void search_by_title_should_Return_list_of_book_for_title_corresponding() {
-//		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("Harry")), "titre");
-//		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
-//		assertEquals(1, resultSearch.size());
-//		assertEquals("Harry Poopper", resultSearch.get(0).getTitle());
-//	}
-//
-//	
-//	public void search_by_tout_should_Return_list_of_book_for_tout__corresponding() {
-//		SearchData d = SearchData.createSearchDataFilter(new ArrayList<String>(Arrays.asList("HUGO")), "tout");
-//		List<Book> resultSearch = s.getResultSearchData(d, library.getListOfAllTheBooks());
-//		assertEquals(2, resultSearch.size());
-//		assertEquals("HUGO", resultSearch.get(0).getAuthor().getLastName());
-//		assertEquals("Hugo", resultSearch.get(1).getAuthor().getFirstName());
-//	}
+	@Test
+	public void search_by_author_should_Return_list_of_book_for_author_corresponding() {
+		SearchData search = SearchData.createSearchDataObject("hugo",
+				PublicationRange.createPublicationRange(null, null), null);
+		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
+		assertEquals(2, resultSearch.size());
+		assertEquals("Les misérables", resultSearch.get(0).getTitle());
+		assertEquals("J'aime le java", resultSearch.get(1).getTitle());
+	}
+
+	@Test
+	public void search_by_title_should_Return_list_of_book_for_title_corresponding() {
+		SearchData search = SearchData.createSearchDataObject(null, PublicationRange.createPublicationRange(null, null),
+				"Les misÊrables");
+		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
+		assertEquals(1, resultSearch.size());
+		assertEquals("Les misérables", resultSearch.get(0).getTitle());
+	}
+
+	@Test
+	public void search_by_rangeOfYear_should_Return_list_of_book_for_rangeOfYear_corresponding() {
+		SearchData search = SearchData.createSearchDataObject(null, PublicationRange.createPublicationRange(1860, 2015),
+				null);
+		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
+		assertEquals(4, resultSearch.size());
+		assertEquals("Les misérables", resultSearch.get(0).getTitle());
+		assertEquals("Harry Poopper", resultSearch.get(1).getTitle());
+		assertEquals("Une vie de coccinelle", resultSearch.get(2).getTitle());
+		assertEquals("J'aime le java", resultSearch.get(3).getTitle());
+	}
+
+	@Test
+	public void test_accent_insensitive() {
+		assertEquals(MakeSearch.isSame("les misÉrables", "Les misérables"), true);
+		assertEquals(MakeSearch.isSame("les misêrables", "Les misérables"), true);
+		assertEquals(MakeSearch.isSame("les miserables", "Les misérables"), true);
+	}
+
+	@Test
+	public void test_intersection() {
+		SearchData search = SearchData.createSearchDataObject("Hugo",
+				PublicationRange.createPublicationRange(1860, 2015), null);
+		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
+		assertEquals(2, resultSearch.size());
+		assertEquals("Les misérables", resultSearch.get(0).getTitle());
+		assertEquals("J'aime le java", resultSearch.get(1).getTitle());
+	}
 
 }

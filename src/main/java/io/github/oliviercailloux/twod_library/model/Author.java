@@ -54,9 +54,15 @@ public class Author {
 				&& this.firstName.equalsIgnoreCase(castedAuthor.firstName);
 	}
 
+	/**
+	 * 
+	 * @param regex the string to compare
+	 * @return true if author containing in firstName or lastName attributes the
+	 *         regex and it's insensitive to case and accents.
+	 */
 	public boolean checkAuthorRegex(String regex) {
-		return this.lastName.toLowerCase().contains(regex.toLowerCase())
-				|| this.firstName.toLowerCase().contains(regex.toLowerCase());
+		return getLastName().toLowerCase().contains(regex.toLowerCase()) || getFirstName().toLowerCase().contains(regex)
+				|| MakeSearch.isSame(getLastName(), regex) || MakeSearch.isSame(getFirstName(), regex);
 	}
 
 	/**
@@ -103,6 +109,9 @@ public class Author {
 		this.lastName = lastName;
 	}
 
+	/**
+	 * using to represent the object Author
+	 */
 	public String toString() {
 
 		return MoreObjects.toStringHelper(this).add("firstname", getFirstName()).add("lastname", getLastName())
