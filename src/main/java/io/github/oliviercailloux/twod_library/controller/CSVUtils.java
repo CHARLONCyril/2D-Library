@@ -18,7 +18,11 @@ import com.univocity.parsers.csv.CsvWriterSettings;
 public class CSVUtils {
 
 	/**
-	 * @return
+	 * 
+	 * @param fileName the name of the file
+	 * @return HashMap with key representing the name of the attribute and values
+	 *         representing the value chosen by the user.
+	 * @throws URISyntaxException
 	 * @see <a href=
 	 *      "https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781787122536/1/ch01lvl1sec15/parsing-comma-separated-value-csv-files-using-univocity">parsing-comma-separated-value-csv-files-using-univocity</a>
 	 */
@@ -35,6 +39,10 @@ public class CSVUtils {
 	}
 
 	/**
+	 * 
+	 * @param fileName the name of the file
+	 * @param content  is what we will write inside the file
+	 * @throws URISyntaxException
 	 * @see <a href=
 	 *      "https://www.univocity.com/pages/univocity_parsers_writing.html#writing">univocity_parsers_writing.html#writing</a>
 	 */
@@ -44,6 +52,11 @@ public class CSVUtils {
 		writer.writeRowsAndClose(content);
 	}
 
+	/**
+	 * 
+	 * @param content is a list containing array of strings
+	 * @return the HashMap associated
+	 */
 	public static HashMap<String, Map<String, String>> convertListToMap(List<String[]> content) {
 
 		LinkedHashMap<String, Map<String, String>> parsefile = new LinkedHashMap<String, Map<String, String>>();
