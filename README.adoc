@@ -7,8 +7,23 @@ A Java project developed by students during the https://github.com/oliviercaillo
 The code is hereby published under the MIT License, with their permission.
 
 = *Plan détaillé des différentes livraisons* :
+ 
+Tâches à réaliser pour la *quatrième livraison* :
+
+  * SearchCongress: Chaque utilisateur pourra faire une recherche sur le site de la bibliothèque du Congrès après avoir rentré ses critères de recherche.
+
+  * Modification de GuiSearch afin d'y inclure la fonctionnalité SearchCongress (itération précédente).
+  
+  * La bibliothèque générée pourra être imprimée par l'utilisateur en format poster ou autre grâce a une fonctionalité: PrintPoster.
+  
+  * Puis nous souhaitons que le livre recherché par l'utilisateur se mette en surbrillance s'il est présent dans la bibliothèque et développer un système de QR code qui permettra  à l'utilisateur d'avoir accès à un résumé du livre.
+  
+  * Si la quatrième itération n'est pas arrivée à son terme, nous allons essayer de faire la migration de AWT vers SWT.
+
 
 *Déjà fait*:
+
+*1ère livraison*
 
 * Contract1 : Bouton plus / moins qui fonctionne correctement.
  
@@ -18,52 +33,35 @@ The code is hereby published under the MIT License, with their permission.
 
 * La fonctionnalité DrawBorder a été implémentée pour entourer les livres générés d'une bordure noire.
 
-___
-  
-Voici les objectifs à atteindre pour la *deuxième livraison* :
+*2ème livraison*
 
-* Nous appliquons les modifications que vous nous avez données dans vos commentaires : 
-   ** Utilisation de SWT à la place de SWING.
-   ** Modification du pom.xml.
-   ** Modification de l'interface JavaSearcher : modification du nom de la méthode getResultSearchData et suppression de la méthode getResultSearchDataLimited.
-   ** Créer un objet qui fait des recherches.
 
- * Interface 2 : Nous allons développer l'interface 2 : C'est à dire développer une classe SimpleSearcher qui implémentera l'inteface que nous avons utilisée lors de la première livraison JavaSearcher. On lui fournira une liste de livres qu'il cherchera dans la bibliothèque déjà existante. 
+ * Modification de l'interface JavaSearcher : modification du nom de la méthode getResultSearchData et suppression de la méthode getResultSearchDataLimited.
+ * Création d'un objet qui fait des recherches.
+
+ * Interface 2 : développement d'une classe SimpleSearcher qui implémente l'interface que nous avons utilisée lors de la première livraison JavaSearcher. On lui fourni une liste de livres qu'il cherche dans la bibliothèque déjà existante. 
  
- * Nous devrons également coder la classe WritePrefs qui permettra la lecture et l'écriture des préférences d'affichage de l'utilisateur dans un fichier CSV.
+ * WritePrefs : classe permettant la lecture et l'écriture des préférences d'affichage de l'utilisateur dans un fichier CSV.
  
- * L'interface graphique utilisateur GuiPrefs qui permettra d'éditer les préférences d'affichage de l'utilisateur : 
- Le programme devra lire un fichier CSV au démarrage, qu'on pourra modifier.
+ * GuiPrefs : GUI permettant d'éditer les préférences d'affichage de l'utilisateur (lecture d'un fichier CSV au démarrage, qu'on peut modifier)
  
- * L'interface graphique utilisateur GuiBooks devra être développée après GuiPrefs et permettra d'éditer la liste de livre.
+ * L'interface graphique utilisateur GuiBooks développée après GuiPrefs et permettant d'éditer la liste de livres.
  
- * Nous allons également améliorer la façon dont nous cherchons les livres dans la bibliothèque.
-  Actuellement, il y a beaucoup de redondance de code, il serait agréable d'utiliser les lambda expressions afin de factoriser le code existant.
-  Nous allons utiliser les méthodes stream et filter pour se faire. 
-  Nous allons passer un paramètre de type fonction à notre méthode de recherche afin que notre méthode soit la plus générale possible. 
+ * Elimination de la redondance de code, utilisation de lambda expressions afin de factoriser le code existant.
  
-  * Pour finir, dans un soucis d'ergonomie la bibliothèque se rechargera à chaque recherche. 
-  
-  ___
+ * Rechargement automatique de la bibliothèque.
  
-Tâches à réaliser pour la *troisième livraison* :
+ *3ème livraison*
  
-  * File1 et File2. Ces deux tâches fonctionnent déjà mais nous voulons les améliorer. Pour file1  nous voulons qu'il soit possible d'afficher la première page de couverture des livres si elle est fournie. Puis pour file2 nous voulons qu'il soit possible de déterminer l'épaisseur de chaque livre au lieu de fournir une hauteur et largeur pour avoir une meilleure précision et remplir de façon plus efficace chaque étagère.
-  
-  * Puis nous allons réaliser Ressource1 qui va permmettre d'inclure un fichier image illustrant le projet et Ressource2 qui permettra d'obtenir un aperçu d'une bibliothèque par défaut sans que l'utilisateur n'ai à cliquer sur "générer ma bibliothèque". 
-  
-  * Pour finir chaque livre se verra transformé en hyperlien qui dirigera l'utilisateur sur une recherche google associée au titre du livre.
-  
-  ___
+ * Nous avons tous d'abord intégré vos remarques de l'itération précédente :
+    - Pour commencer, nous avons intégré au parsing du fichier CSV l'utilisation de la bibliothèque Univocity ce qui a grandement diminué la longeur de notre code et facilité la compréhension.
+    
+    - Puis nous avons apporté les modifications demandées à la classe SearchData afin qu'elle puisse stocker les données de recherche des utilistateurs. Pour ce faire, nous avons ajouté trois attributs : deux attributs de type String pour pouvoir effectuer des recherches sur le nom de l'auteur ou sur le titre du livre. Puis, nous avons créé une classe pour pouvoir stocker un interval de date afin de filter les livres en fonction de leur date de parution.
+    
+    - Ensuite, nous avons ajouté des liens pour effectuer une recherche sur les informations inscrites sur la tranche des livres. Cette partie fut assez difficle car au début nous avons essayé d'ajouter des liens après la génération du SVG, mais nous n'avons pas réussi à rajouter dans le SVG le lien associé au livre. Donc par soucis de productivité en s'inspirant du projet appelé "mido-svg", nous avons ajouté les liens avant la génération du svg. Néanmoins d'autres problèmes sont apparues comme la cohabitation entre le svg et le JFrame car il y avait des problèmes de compatbilité entre eux ce qui nous à fait perdre énormément de temps.
+    
+    - Enfin nous avons essayé de faire la migration de AWT vers SWT sans succés car nous aurions dû refaire l'intégralité de l'interface graphique.
  
-Tâches à réaliser pour la *quatrième livraison* :
  
-  * SearchCongress: Chaque utilisateur pourra faire une recherche sur le site de la bibliothèque du Congrès après avoir rentré ses critères de recherche.
-  
-  * Puis nous allons modifier GuiSearch afin d'y inclure la fonctionalité ci-dessus.
-  
-  * La bibliothèque ainsi généré pourra être imprimée par l'utilisateur en format poster ou autre grâce a une fonctionalité: PrintPoster.
-  
-  * Enfin s'il nous reste du temps nous souhaitons que le livre recherché par l'utilisateur se mette en surbrillance s'il est présent dans la bibliothèque et développer un système de QR code qui permettra  à l'utilisateur d'avoir accèss à un résumé du livre.
-  
+ 
 
