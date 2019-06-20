@@ -4,7 +4,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +25,7 @@ public class CSVUtils {
 	 * @see <a href=
 	 *      "https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781787122536/1/ch01lvl1sec15/parsing-comma-separated-value-csv-files-using-univocity">parsing-comma-separated-value-csv-files-using-univocity</a>
 	 */
-	public static HashMap<String, Map<String, String>> parseCSVFile(String fileName) throws URISyntaxException {
+	public static Map<String, Map<String, String>> parseCSVFile(String fileName) throws URISyntaxException {
 		CsvParserSettings parserSettings = new CsvParserSettings();
 		parserSettings.setLineSeparatorDetectionEnabled(true);
 		RowListProcessor rowProcessor = new RowListProcessor();
@@ -57,7 +56,7 @@ public class CSVUtils {
 	 * @param content is a list containing array of strings
 	 * @return the HashMap associated
 	 */
-	public static HashMap<String, Map<String, String>> convertListToMap(List<String[]> content) {
+	public static Map<String, Map<String, String>> convertListToMap(List<String[]> content) {
 
 		LinkedHashMap<String, Map<String, String>> parsefile = new LinkedHashMap<String, Map<String, String>>();
 		for (int i = 0; i < content.size(); i++) {

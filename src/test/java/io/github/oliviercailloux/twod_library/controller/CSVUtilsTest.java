@@ -13,12 +13,8 @@ import org.junit.Test;
 public class CSVUtilsTest {
 
 	public void test_parseCSVFile() throws URISyntaxException {
-		HashMap<String, Map<String, String>> UserSettings;
-		try {
-			UserSettings = CSVUtils.parseCSVFile("UserPreferenceTest.csv");
-		} catch (URISyntaxException e) {
-			throw e;
-		}
+		Map<String, Map<String, String>> UserSettings;
+		UserSettings = CSVUtils.parseCSVFile("UserPreferenceTest.csv");
 		assertEquals(1, UserSettings.size());
 		HashMap<String, String> expectedKey = new HashMap<String, String>();
 		expectedKey.put("Auto", "true");
@@ -32,11 +28,7 @@ public class CSVUtilsTest {
 
 		List<List<String>> expected = Arrays
 				.asList(Arrays.asList("Background Color :", "Auto", "true", "Light", "false", "Dark", "false"));
-		try {
-			CSVUtils.writeIntoCSVFile("UserPreferenceTest.csv", expected);
-		} catch (URISyntaxException e) {
-			throw e;
-		}
+		CSVUtils.writeIntoCSVFile("UserPreferenceTest.csv", expected);
 		test_parseCSVFile();
 	}
 

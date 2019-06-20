@@ -20,7 +20,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -223,58 +222,52 @@ public class Window2DLibrary extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String s = e.getActionCommand();
 			if (s.equals("Generate my library") || s.equals("Reload my library now")) {
+
 				try {
 					updateSVGLibrary();
-					List<String> csvColumn = Arrays.asList(String.valueOf(bAutoBk.isSelected()),
-							String.valueOf(bLightBk.isSelected()), String.valueOf(bDarkBk.isSelected()),
-							String.valueOf(bAutoS.isSelected()), String.valueOf(bLightS.isSelected()),
-							String.valueOf(bDarkS.isSelected()), String.valueOf(bAutoB.isSelected()),
-							String.valueOf(bLightB.isSelected()), String.valueOf(bDarkB.isSelected()),
-							String.valueOf(bNotLeanS.isSelected()), String.valueOf(bLeanS.isSelected()),
-							String.valueOf(sortAutoButton.isSelected()), String.valueOf(sortYearButton.isSelected()),
-							String.valueOf(sortAscendingYearButton.isSelected()),
-							String.valueOf(sortAuthorButton.isSelected()), String.valueOf(sortTitleButton.isSelected()),
-							numberBooksPerShelfTextField.getText());
-
-					List<List<String>> csvFile = new ArrayList<List<String>>();
-					Set<String> cles = UserSettings.keySet();
-					Iterator<String> it = cles.iterator();
-					int indice = 0;
-
-					while (it.hasNext()) {
-						Object cle = it.next();
-						Set<?> cles2 = UserSettings.get(cle).keySet();
-						Iterator<?> it2 = cles2.iterator();
-						List<String> subList = new ArrayList<String>();
-						subList.add(cle.toString());
-						while (it2.hasNext()) {
-							Object cle2 = it2.next();
-							subList.add(cle2.toString());
-							subList.add(csvColumn.get(indice));
-							indice += 1;
-						}
-
-						csvFile.add(subList);
-
-					}
-
-					CSVUtils.writeIntoCSVFile("UserPreference.csv", csvFile);
-				} catch (ParserConfigurationException ex) {
-					LOGGER.error("Impossible to refresh the button after the last update of library");
-					try {
-						throw ex;
-					} catch (ParserConfigurationException ex1) {
-						ex1.printStackTrace();
-					}
-				} catch (URISyntaxException e1) {
-					try {
-						throw e1;
-					} catch (URISyntaxException e2) {
-						e2.printStackTrace();
-					}
+				} catch (ParserConfigurationException e1) {
+					throw new RuntimeException(e1);
 				}
-			}
+				List<String> csvColumn = Arrays.asList(String.valueOf(bAutoBk.isSelected()),
+						String.valueOf(bLightBk.isSelected()), String.valueOf(bDarkBk.isSelected()),
+						String.valueOf(bAutoS.isSelected()), String.valueOf(bLightS.isSelected()),
+						String.valueOf(bDarkS.isSelected()), String.valueOf(bAutoB.isSelected()),
+						String.valueOf(bLightB.isSelected()), String.valueOf(bDarkB.isSelected()),
+						String.valueOf(bNotLeanS.isSelected()), String.valueOf(bLeanS.isSelected()),
+						String.valueOf(sortAutoButton.isSelected()), String.valueOf(sortYearButton.isSelected()),
+						String.valueOf(sortAscendingYearButton.isSelected()),
+						String.valueOf(sortAuthorButton.isSelected()), String.valueOf(sortTitleButton.isSelected()),
+						numberBooksPerShelfTextField.getText());
 
+				List<List<String>> csvFile = new ArrayList<List<String>>();
+				Set<String> ks = UserSettings.keySet();
+				Iterator<String> it = ks.iterator();
+				int range = 0;
+
+				while (it.hasNext()) {
+					Object key = it.next();
+					Set<?> key2 = UserSettings.get(key).keySet();
+					Iterator<?> it2 = key2.iterator();
+					List<String> subList = new ArrayList<String>();
+					subList.add(key.toString());
+					while (it2.hasNext()) {
+						Object k2 = it2.next();
+						subList.add(k2.toString());
+						subList.add(csvColumn.get(range));
+						range += 1;
+					}
+
+					csvFile.add(subList);
+
+				}
+
+				try {
+					CSVUtils.writeIntoCSVFile("UserPreference.csv", csvFile);
+				} catch (URISyntaxException e1) {
+					throw new RuntimeException(e1);
+				}
+
+			}
 		}
 	}
 
@@ -465,7 +458,7 @@ public class Window2DLibrary extends JFrame {
 	private JTextField searchTextField, firstNameTextField, lastNameTextField, titleTextField, yearTextField,
 			dimXTextField, dimYTextField;
 
-	private HashMap<String, Map<String, String>> UserSettings;
+	private Map<String, Map<String, String>> UserSettings;
 
 	private JCheckBox sortAscendingYearButton;
 
@@ -509,19 +502,9 @@ public class Window2DLibrary extends JFrame {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.dimension();
 		this.svgLibrary = svgLibrary2;
-		try {
-			this.UserSettings = CSVUtils.parseCSVFile("UserPreference.csv");
-		} catch (URISyntaxException e) {
-			LOGGER.error("Unabled to find UserPreference.csv");
-			throw e;
-		}
+		this.UserSettings = CSVUtils.parseCSVFile("UserPreference.csv");
 		this.initialise();
-		try {
-			updateSVGLibrary();
-		} catch (ParserConfigurationException e) {
-			LOGGER.error("Unabled to update SVG library");
-			throw e;
-		}
+		updateSVGLibrary();
 		this.setVisible(true);
 
 	}
