@@ -7,21 +7,6 @@ A Java project developed by students during the https://github.com/oliviercaillo
 The code is hereby published under the MIT License, with their permission.
 
 = *Plan détaillé des différentes livraisons* :
-
-Tâches à réaliser pour la *troisième livraison* :
-
-  * Intégration des remarques sur l'itération précédente :
-    - Utilisation de SWT à la place de AWT
-    - Modification de la classe SearchData pour intégrer 3 attributs (AuthorRegExp : Recherche sur le nom de l'autheur; pubRange : intervalle de date de publication; titleRegExp : Recherche sur le titre) ce qui permettra une recherche plus poussée que celle qui existe actuellement. La GUI devra évoluer pour intégrer ces trois attributs (1 champs pour l'autheur, 1 champs pour le titre et 2 champs pour l'intervalle de date).
- 
-  * File2 : Nous voulons qu'il soit possible de déterminer l'épaisseur de chaque livre au lieu de fournir une hauteur et largeur pour avoir une représentation graphique plus réaliste.
-  
-  * Ressource1 : ajout d'une image illustrant le projet. 
-  
-  * DrawLinks : chaque livre se verra transformé en hyperlien qui dirigera l'utilisateur sur une recherche google associée au titre du livre.
-  
-  ___
- 
  
 Tâches à réaliser pour la *quatrième livraison* :
 
@@ -31,8 +16,9 @@ Tâches à réaliser pour la *quatrième livraison* :
   
   * La bibliothèque générée pourra être imprimée par l'utilisateur en format poster ou autre grâce a une fonctionalité: PrintPoster.
   
-  * Enfin s'il nous reste du temps nous souhaitons que le livre recherché par l'utilisateur se mette en surbrillance s'il est présent dans la bibliothèque et développer un système de QR code qui permettra  à l'utilisateur d'avoir accèss à un résumé du livre.
-
+  * Puis nous souhaitons que le livre recherché par l'utilisateur se mette en surbrillance s'il est présent dans la bibliothèque et développer un système de QR code qui permettra  à l'utilisateur d'avoir accès à un résumé du livre.
+  
+  * Si la quatrième itération n'est pas arrivée à son terme, nous allons essayer de faire la migration de AWT vers SWT.
 
 
 *Déjà fait*:
@@ -65,7 +51,17 @@ Tâches à réaliser pour la *quatrième livraison* :
  
  * Rechargement automatique de la bibliothèque.
  
-  ___
+ *3ème livraison*
+ 
+ * Nous avons tous d'abord intégré vos remarques de l'itération précédente :
+    - Pour commencer, nous avons intégré au parsing du fichier CSV l'utilisation de la bibliothèque Univocity ce qui a grandement diminué la longeur de notre code et facilité la compréhension.
+    
+    - Puis nous avons apporté les modifications demandées à la classe SearchData afin qu'elle puisse stocker les données de recherche des utilistateurs. Pour ce faire, nous avons ajouté trois attributs : deux attributs de type String pour pouvoir effectuer des recherches sur le nom de l'auteur ou sur le titre du livre. Puis, nous avons créé une classe pour pouvoir stocker un interval de date afin de filter les livres en fonction de leur date de parution.
+    
+    - Ensuite, nous avons ajouté des liens pour effectuer une recherche sur les informations inscrites sur la tranche des livres. Cette partie fut assez difficle car au début nous avons essayé d'ajouter des liens après la génération du SVG, mais nous n'avons pas réussi à rajouter dans le SVG le lien associé au livre. Donc par soucis de productivité en s'inspirant du projet appelé "mido-svg", nous avons ajouté les liens avant la génération du svg. Néanmoins d'autres problèmes sont apparues comme la cohabitation entre le svg et le JFrame car il y avait des problèmes de compatbilité entre eux ce qui nous à fait perdre énormément de temps.
+    
+    - Enfin nous avons essayé de faire la migration de AWT vers SWT sans succés car nous aurions dû refaire l'intégralité de l'interface graphique.
+ 
  
  
 
