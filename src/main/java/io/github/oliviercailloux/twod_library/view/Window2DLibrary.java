@@ -4,11 +4,11 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,10 +16,10 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Enumeration;
 import java.util.List;
 
@@ -39,9 +39,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
 import javax.swing.text.JTextComponent;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.batik.swing.JSVGCanvas;
+import org.apache.batik.swing.svg.LinkActivationEvent;
+import org.apache.batik.swing.svg.LinkActivationListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +57,7 @@ import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 import io.github.oliviercailloux.twod_library.model.SearchData;
 
-
-public class Window2DLibrary extends JFrame {
-
+public class Window2DLibrary<HTLMEditorKit> extends JFrame {
 	class AddBookButtonListener implements ActionListener {
 
 		private JComboBox<String> colorComboBox;
@@ -224,6 +227,16 @@ public class Window2DLibrary extends JFrame {
 				} catch (ParserConfigurationException ex) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
 					ex.printStackTrace();
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (InstantiationException e1) {
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				} catch (ClassCastException e1) {
+					e1.printStackTrace();
 				}
 			}
 
@@ -293,6 +306,7 @@ public class Window2DLibrary extends JFrame {
 			this.setSearchTextField(searchTextField2);
 			this.setQteBookSerach(qteBookSerach);
 		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -320,6 +334,16 @@ public class Window2DLibrary extends JFrame {
 				} catch (ParserConfigurationException ex) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
 					ex.printStackTrace();
+				} catch (URISyntaxException e1) {
+					e1.printStackTrace();
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (InstantiationException e1) {
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				} catch (ClassCastException e1) {
+					e1.printStackTrace();
 				}
 			}
 		}
@@ -352,7 +376,6 @@ public class Window2DLibrary extends JFrame {
 		public void setQteBookSerach(JFormattedTextField qteBookSerach) {
 			this.qteBookSerach = qteBookSerach;
 		}
-
 
 	}
 
@@ -524,7 +547,6 @@ public class Window2DLibrary extends JFrame {
 		final int CAPACITY_MIN_PER_SHELF = 5;
 		final int CAPACITY_MAX_PER_SHELF = 20;
 		optionsJPanel = new JPanel();
-		Image image = null;
 		JPanel optionsNames = new JPanel(new GridLayout(0, 2, 40, 30));
 		JPanel parameters = new JPanel();
 		JPanel choice = new JPanel();
@@ -672,7 +694,6 @@ public class Window2DLibrary extends JFrame {
 		sortAscendingYearButton = new JCheckBox("Most recent first (sort by year)");
 		sortAscendingYearButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAscendingYearButton.setOpaque(false);
-
 
 		numberBooksPerShelfTextField.addFocusListener(new FocusListener() {
 
@@ -972,9 +993,15 @@ public class Window2DLibrary extends JFrame {
 	 *
 	 * @return nothing
 	 * @throws ParserConfigurationException
+	 * @throws URISyntaxException
+	 * @throws ClassCastException
+	 * @throws IllegalAccessException
+	 * @throws InstantiationException
+	 * @throws ClassNotFoundException
 	 */
 
-	public void updateSVGLibrary() throws ParserConfigurationException {
+	public void updateSVGLibrary() throws ParserConfigurationException, URISyntaxException, ClassNotFoundException,
+			InstantiationException, IllegalAccessException, ClassCastException {
 		generateButton.setText("Reload my library now");
 
 		switch (sort) {
@@ -983,7 +1010,7 @@ public class Window2DLibrary extends JFrame {
 					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		case "Title":
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));	
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));
 
 			break;
 		case "Year":
@@ -992,23 +1019,24 @@ public class Window2DLibrary extends JFrame {
 					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		default:
-			 svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
-			 break;
+			svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
+			break;
 
 		}
-		updateDrawingLibrary(svgLibrary);
+		try {
+			updateDrawingLibrary(svgLibrary);
+		} catch (URISyntaxException e) {
+			throw e;
+		}
 	}
 
-	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException {
+	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException, URISyntaxException,
+			ClassNotFoundException, InstantiationException, IllegalAccessException, ClassCastException {
 
 		try {
 			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor,
 					numberBooksPerShelfTextField.getText());
 		} catch (IOException e) {
-			LOGGER.error(
-					"Error when we generateButton the library with ordinary field : Some parameters seems npt ok PLEASE CHECK GENERATE METHOD");
-			e.printStackTrace();
-		} catch (ParserConfigurationException e) {
 			LOGGER.error(
 					"Error when we generateButton the library with ordinary field : Some parameters seems npt ok PLEASE CHECK GENERATE METHOD");
 			e.printStackTrace();
@@ -1019,15 +1047,47 @@ public class Window2DLibrary extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
 		pCenter.removeAll();
-		pCenter.revalidate();
-		JLabel libImage = new JLabel();
-		myLibIcon = new ImageIcon(svgLibrary.getNewImage());
-		libImage.setIcon(myLibIcon);
-		pCenter.add(libImage);
-		JScrollPane asc = new JScrollPane(libImage);
-		pCenter.add(asc);
-		pCenter.updateUI();
+		JSVGCanvas svgCanvas = new JSVGCanvas();
+
+		String imgsrc = "file:" + DataFile.class.getResource("library.html").toURI().getPath();
+		svgCanvas.setURI(imgsrc);
+		File f = new File(DataFile.class.getResource("library.svg").toURI().getPath());
+		HyperlinkListener listener = new HyperlinkListener() {
+			@Override
+			public void hyperlinkUpdate(HyperlinkEvent hyperLink) {
+				if (HyperlinkEvent.EventType.ACTIVATED.equals(hyperLink.getEventType())) {
+					try {
+						String urlWithEncodedSpaces = hyperLink.getURL().toString().replaceAll(" ", "%20");
+						Desktop.getDesktop().browse(new URI(urlWithEncodedSpaces).toURL().toURI());
+					} catch (Exception e) {
+						LOGGER.error("Wrong URL" + hyperLink.getURL().toString());
+						e.printStackTrace();
+					}
+
+				}
+			}
+
+		};
+
+		svgCanvas.addLinkActivationListener(new LinkActivationListener() {
+
+			@Override
+			public void linkActivated(LinkActivationEvent e) {
+				try {
+					System.out.println(e.getReferencedURI());
+					System.out.println(e.getSource());
+					String urlWithEncodedSpaces = e.getReferencedURI().toString().replaceAll(" ", "%20");
+					Desktop.getDesktop().browse(new URI(urlWithEncodedSpaces).toURL().toURI());
+				} catch (Exception e1) {
+					LOGGER.error("Wrong URL" + e.getReferencedURI().toString());
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		pCenter.add(svgCanvas);
 		File fichier = new File(svgLibrary.getNewImage());
 		fichier.delete();
 	}
