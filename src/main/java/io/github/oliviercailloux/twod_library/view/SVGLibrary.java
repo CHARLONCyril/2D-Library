@@ -7,6 +7,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -15,7 +16,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.nio.file.Paths;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -44,7 +45,6 @@ import io.github.oliviercailloux.twod_library.model.Library;
 public class SVGLibrary {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(SVGLibrary.class);
-	public static final String DRAWING_SVG = "./src/main/resources/io/github/oliviercailloux/twod_library/controller/library.svg";
 	private SVGGraphics2D graphics;
 	private int lastColorIndex = -1;
 
@@ -61,13 +61,18 @@ public class SVGLibrary {
 		this.graphics = generateSVG();
 	}
 
+	public String getStringPathForSVGDocument() throws MalformedURLException {
+		return new File(getClass().getClassLoader()
+				.getResource("io/github/oliviercailloux/twod_library/controller/library.svg").getFile()).toString()
+						.replaceAll("%20", " ");
+	}
+
 	/***
 	 * Conversion .svg to .png for create a format more standard and print it
 	 *
 	 */
 	public void convert() throws Exception {
-		String svg_URI_input = Paths.get(DRAWING_SVG).toUri().toURL().toString();
-		TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
+		TranscoderInput input_svg_image = new TranscoderInput("file:" + getStringPathForSVGDocument());
 		this.setNewImage(generate(20));// Define the name of the file
 		try (OutputStream png_ostream = new FileOutputStream(newImage)) {
 			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
@@ -117,7 +122,7 @@ public class SVGLibrary {
 		drawBooksAndTitles(spaceBetweenShelves, dimCanvasX, thiknessEdges, shelfWidth, leaning, shelves, bColor);
 		// Finally, stream out SVG using UTF-8 encoding.
 		boolean useCSS = true; // we want to use CSS style attributes
-		try (Writer out = new OutputStreamWriter(new FileOutputStream(DRAWING_SVG), "UTF-8")) {
+		try (Writer out = new OutputStreamWriter(new FileOutputStream(getStringPathForSVGDocument()), "UTF-8")) {
 			graphics.stream(out, useCSS);
 		} catch (UnsupportedEncodingException e) {
 			throw e;
@@ -126,17 +131,19 @@ public class SVGLibrary {
 		} catch (IOException e) {
 			throw e;
 		}
-		String content = this.svgLinkable(DRAWING_SVG);
-		IOUtils.write(content, new FileOutputStream(DRAWING_SVG), "UTF-8");
+		String content = this.svgLinkable(getStringPathForSVGDocument());
+		IOUtils.write(content, new FileOutputStream(getStringPathForSVGDocument()), "UTF-8");
 	}
 
 	/**
 	 * This is to replace "&lt;" by "<" and "&gt;" by ">" because I did not found
 	 * how to avoid converting < into &lt; and > into &gt;
+	 * 
+	 * @see mido-svg project on DrawerSVGGen class
 	 **/
 
 	public String svgLinkable(String file) throws FileNotFoundException, IOException {
-		String content = IOUtils.toString(new FileInputStream(DRAWING_SVG), "UTF-8");
+		String content = IOUtils.toString(new FileInputStream(getStringPathForSVGDocument()), "UTF-8");
 		content = content.replaceAll("&lt;", "<");
 		content = content.replaceAll("&gt;", ">");
 		return content = content.replaceAll("unicode=\"<\"", "unicode=\"\"");
