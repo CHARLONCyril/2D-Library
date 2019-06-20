@@ -1,59 +1,43 @@
 package io.github.oliviercailloux.twod_library.model;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import org.glassfish.jersey.internal.guava.MoreObjects;
 
-import com.google.common.base.Preconditions;
+public final class SearchData {
 
-public class SearchData {
-	@SuppressWarnings("rawtypes")
-	private Set searchCriteria; // containing whole informations entered by the user( the title of the book,
-								// name of the author ...)
-	private String typeOfSearch; // If we search by author or by title or by date...
+	private final String authorRegex;
+	private final PublicationRange publication;
+	private final String titleRegex;
 
-	private <E> SearchData(ArrayList<E> searchCriteria, String TypeOfSearch) {
-		Preconditions.checkNotNull(searchCriteria);
-		this.setSearchCriteria(new HashSet<E>(searchCriteria));
-		this.setTypeOfSearch(TypeOfSearch);
+	public String getAuthorRegex() {
+		return authorRegex;
+	}
 
+	public PublicationRange getPublication() {
+		return publication;
+	}
+
+	public String getTitleRegex() {
+		return titleRegex;
+	}
+
+	private SearchData(String authorRegex1, PublicationRange publication, String titleRegex) {
+		this.authorRegex = authorRegex1;
+		this.publication = publication;
+		this.titleRegex = titleRegex;
+	}
+
+	public static SearchData createSearchDataObject(String authorRegex, PublicationRange publication,
+			String titleRegex) {
+		return new SearchData(authorRegex, publication, titleRegex);
 	}
 
 	/**
-	 * 
-	 * @param searchCriteria the list of user criteria for the search
-	 * @param typeOfSearch   the type of the research wanted by the user
-	 * @return a new SearchData object
+	 * using to represent the object SearchData
 	 */
-	public static SearchData createSearchDataFilter(ArrayList<String> searchCriteria, String typeOfSearch) {
-		return new SearchData(searchCriteria, typeOfSearch);
-	}
-
-	@SuppressWarnings("rawtypes")
-	public <E> Set getSearchCriteria() {
-		return searchCriteria;
-	}
-
-	public <E> void setSearchCriteria(Set<E> searchCriteria) {
-		this.searchCriteria = searchCriteria;
-	}
-
 	public String toString() {
-		String message = "User search filter : \n";
-		for (Object entry : getSearchCriteria()) {
-			message += entry + "\n";
-		}
-		message += "Type of search : \n" + getTypeOfSearch();
-		return message;
-	}
 
-	public String getTypeOfSearch() {
-		return typeOfSearch;
-	}
-
-	public void setTypeOfSearch(String typeOfSearch) {
-		this.typeOfSearch = typeOfSearch;
+		return MoreObjects.toStringHelper(this).add("authorRegex", getAuthorRegex())
+				.add("publication", getPublication()).add("titleRegex", getTitleRegex()).toString();
 	}
 
 }
-
