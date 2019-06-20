@@ -21,11 +21,7 @@ public class Main {
 		DataFile dataFile = new DataFile();
 		Library library = new Library(dataFile.read(), 18);
 		SVGLibrary svgLibrary = new SVGLibrary(library);
-		try {
-			new Window2DLibrary("2D_LIBRARY PROJECT", svgLibrary);
-		} catch (URISyntaxException e) {
-			throw e;
-		}
+		new Window2DLibrary("2D_LIBRARY PROJECT", svgLibrary);
 	}
 
 }
