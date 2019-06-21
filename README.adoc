@@ -19,3 +19,13 @@ The code is hereby published under the MIT License, with their permission.
   
  ** #8 Update README.adoc -> girardet
   
+   
+*PR effectuées durant l'Itération 3 :*
+  
+ ** #14 Add link to svg library and dispay the svg on Jframe -> girardet & erictanggit 
+
+ ** #13 Plan iteration 3 -> HenryJulienDesgranges
+
+ ** #11 Searchdata v2 -> CHARLONCyril & douhakarim & erictanggit & girardet & HenryJulienDesgranges
+  
+ ** #9 Write prefs  ->   CHARLONCyril & douhakarim
