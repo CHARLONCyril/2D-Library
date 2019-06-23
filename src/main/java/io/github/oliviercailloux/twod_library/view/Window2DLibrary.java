@@ -20,10 +20,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
@@ -222,47 +219,29 @@ public class Window2DLibrary extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String s = e.getActionCommand();
 			if (s.equals("Generate my library") || s.equals("Reload my library now")) {
-
+				System.out.println("lacazette");
+				System.out.println(groupBackGroundColor.getSelection().getActionCommand());
+				System.out.println(groupShelvesColor.getSelection().getActionCommand());
+				System.out.println(groupBooksColor.getSelection().getActionCommand());
+				System.out.println(groupPositionBook.getSelection().getActionCommand());
+				System.out.println(groupSortBy.getSelection().getActionCommand());
+				System.out.println(sortAscendingYearButton.getActionCommand());
+				System.out.println(numberBooksPerShelfTextField.getText());
 				try {
 					updateSVGLibrary();
 				} catch (ParserConfigurationException e1) {
 					throw new RuntimeException(e1);
 				}
-				List<String> csvColumn = Arrays.asList(String.valueOf(bAutoBk.isSelected()),
-						String.valueOf(bLightBk.isSelected()), String.valueOf(bDarkBk.isSelected()),
-						String.valueOf(bAutoS.isSelected()), String.valueOf(bLightS.isSelected()),
-						String.valueOf(bDarkS.isSelected()), String.valueOf(bAutoB.isSelected()),
-						String.valueOf(bLightB.isSelected()), String.valueOf(bDarkB.isSelected()),
-						String.valueOf(bNotLeanS.isSelected()), String.valueOf(bLeanS.isSelected()),
-						String.valueOf(sortAutoButton.isSelected()), String.valueOf(sortYearButton.isSelected()),
-						String.valueOf(sortAscendingYearButton.isSelected()),
-						String.valueOf(sortAuthorButton.isSelected()), String.valueOf(sortTitleButton.isSelected()),
+				List<Object> csvLine = Arrays.asList(groupBackGroundColor.getSelection().getActionCommand(),
+						groupShelvesColor.getSelection().getActionCommand(),
+						groupBooksColor.getSelection().getActionCommand(),
+						groupPositionBook.getSelection().getActionCommand(),
+						groupSortBy.getSelection().getActionCommand(),
+						(sortAscendingYearButton.isSelected()) ? "sort ascending" : "not sort ascending",
 						numberBooksPerShelfTextField.getText());
-
-				List<List<String>> csvFile = new ArrayList<List<String>>();
-				Set<String> ks = UserSettings.keySet();
-				Iterator<String> it = ks.iterator();
-				int range = 0;
-
-				while (it.hasNext()) {
-					Object key = it.next();
-					Set<?> key2 = UserSettings.get(key).keySet();
-					Iterator<?> it2 = key2.iterator();
-					List<String> subList = new ArrayList<String>();
-					subList.add(key.toString());
-					while (it2.hasNext()) {
-						Object k2 = it2.next();
-						subList.add(k2.toString());
-						subList.add(csvColumn.get(range));
-						range += 1;
-					}
-
-					csvFile.add(subList);
-
-				}
-
+				System.out.println(csvLine);
 				try {
-					CSVUtils.writeIntoCSVFile("UserPreference.csv", csvFile);
+					CSVUtils.writeIntoCSVFile("UserPreference.csv", Arrays.asList(csvLine));
 				} catch (URISyntaxException e1) {
 					throw new RuntimeException(e1);
 				}
@@ -458,7 +437,8 @@ public class Window2DLibrary extends JFrame {
 	private JTextField searchTextField, firstNameTextField, lastNameTextField, titleTextField, yearTextField,
 			dimXTextField, dimYTextField;
 
-	private Map<String, Map<String, String>> UserSettings;
+	private ButtonGroup groupBackGroundColor, groupShelvesColor, groupBooksColor, groupPositionBook, groupSortBy;
+	private List<String[]> UserSettings;
 
 	private JCheckBox sortAscendingYearButton;
 
@@ -608,10 +588,7 @@ public class Window2DLibrary extends JFrame {
 		sortTitleJLabel.setFont(new Font("Book Antiqua", Font.ITALIC, 25));
 		JLabel numberBooksPerShelfTitleJLabel = new JLabel("Books per shelf:");
 		numberBooksPerShelfTitleJLabel.setFont(new Font("Book Antiqua", Font.ITALIC, 25));
-		nbBooksPerShelf = (Integer.valueOf(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0")) <= 20
-				&& Integer.valueOf(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0")) >= 5)
-						? Integer.valueOf(UserSettings.get(numberBooksPerShelfTitleJLabel.getText()).get("0"))
-						: 10;
+		nbBooksPerShelf = (Integer.valueOf(UserSettings.get(0)[6]));
 		numberBooksPerShelfTextField = new JFormattedTextField(nbBooksPerShelf);
 		JLabel titleSecondColumn = new JLabel("Choices");
 		choice.setOpaque(false);
@@ -631,12 +608,6 @@ public class Window2DLibrary extends JFrame {
 		JPanel numberBooksPerShelfJPanel = new JPanel();
 		numberBooksPerShelfJPanel.setOpaque(false);
 
-		ButtonGroup backgroundColorButtonGroup = new ButtonGroup();
-		ButtonGroup shelvesColor = new ButtonGroup();
-		ButtonGroup booksColor = new ButtonGroup();
-		ButtonGroup sortButtonGroup = new ButtonGroup();
-		ButtonGroup leanButtonGroup = new ButtonGroup();
-
 		bAutoBk = new JRadioButton("Auto");
 		bLightBk = new JRadioButton("Light");
 		bDarkBk = new JRadioButton("Dark");
@@ -644,22 +615,21 @@ public class Window2DLibrary extends JFrame {
 		bLightBk.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bDarkBk.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bAutoBk.setOpaque(false);
-		bAutoBk.setSelected(
-				Boolean.valueOf(UserSettings.get(backgroundColorTitleJLabel.getText()).get(bAutoBk.getText())));
+		bAutoBk.setSelected(UserSettings.get(0)[0].equals("Auto") ? true : false);
+		bAutoBk.setActionCommand("Auto");
 		bLightBk.setOpaque(false);
-		bLightBk.setSelected(
-				Boolean.valueOf(UserSettings.get(backgroundColorTitleJLabel.getText()).get(bLightBk.getText())));
+		bLightBk.setSelected(UserSettings.get(0)[0].equals("Light") ? true : false);
+		bLightBk.setActionCommand("Light");
 		bDarkBk.setOpaque(false);
-		bDarkBk.setSelected(
-				Boolean.valueOf(UserSettings.get(backgroundColorTitleJLabel.getText()).get(bDarkBk.getText())));
-
+		bDarkBk.setSelected(UserSettings.get(0)[0].equals("Dark") ? true : false);
+		bDarkBk.setActionCommand("Dark");
 		bAutoBk.addActionListener(new BackgroundColorButtonListener(bAutoBk, bLightBk, bDarkBk));
 		bLightBk.addActionListener(new BackgroundColorButtonListener(bAutoBk, bLightBk, bDarkBk));
 		bDarkBk.addActionListener(new BackgroundColorButtonListener(bAutoBk, bLightBk, bDarkBk));
-
-		backgroundColorButtonGroup.add(bAutoBk);
-		backgroundColorButtonGroup.add(bLightBk);
-		backgroundColorButtonGroup.add(bDarkBk);
+		groupBackGroundColor = new ButtonGroup();
+		groupBackGroundColor.add(bAutoBk);
+		groupBackGroundColor.add(bLightBk);
+		groupBackGroundColor.add(bDarkBk);
 		if (bAutoBk.isSelected()) {
 			backgroundColor = bAutoBk.getActionCommand();
 		} else if (bLightBk.isSelected()) {
@@ -678,16 +648,19 @@ public class Window2DLibrary extends JFrame {
 		bLightS.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bDarkS.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bAutoS.setOpaque(false);
-		bAutoS.setSelected(Boolean.valueOf(UserSettings.get(shelvesColorTitleJLabel.getText()).get(bAutoS.getText())));
+		bAutoS.setSelected(UserSettings.get(0)[1].equals("Auto") ? true : false);
+		bAutoS.setActionCommand("Auto");
 		bLightS.setOpaque(false);
-		bLightS.setSelected(
-				Boolean.valueOf(UserSettings.get(shelvesColorTitleJLabel.getText()).get(bLightS.getText())));
-
+		bLightS.setSelected(UserSettings.get(0)[1].equals("Light") ? true : false);
+		bLightS.setActionCommand("Light");
 		bDarkS.setOpaque(false);
-		bDarkS.setSelected(Boolean.valueOf(UserSettings.get(shelvesColorTitleJLabel.getText()).get(bDarkS.getText())));
-		shelvesColor.add(bAutoS);
-		shelvesColor.add(bLightS);
-		shelvesColor.add(bDarkS);
+		bDarkS.setSelected(UserSettings.get(0)[1].equals("Dark") ? true : false);
+		bDarkS.setActionCommand("Dark");
+
+		groupShelvesColor = new ButtonGroup();
+		groupShelvesColor.add(bAutoS);
+		groupShelvesColor.add(bLightS);
+		groupShelvesColor.add(bDarkS);
 
 		if (bAutoS.isSelected()) {
 			shelfColor = bAutoS.getActionCommand();
@@ -698,14 +671,19 @@ public class Window2DLibrary extends JFrame {
 		}
 
 		bAutoB = new JRadioButton("Auto");
-		bAutoB.setSelected(Boolean.valueOf(UserSettings.get(booksColorTitleJLabel.getText()).get(bAutoB.getText())));
+		bAutoB.setSelected(UserSettings.get(0)[2].equals("Auto") ? true : false);
+		bAutoB.setActionCommand("Auto");
 		bLightB = new JRadioButton("Light");
-		bLightB.setSelected(Boolean.valueOf(UserSettings.get(booksColorTitleJLabel.getText()).get(bLightB.getText())));
+		bLightB.setSelected(UserSettings.get(0)[2].equals("Light") ? true : false);
+		bLightB.setActionCommand("Light");
 		bDarkB = new JRadioButton("Dark");
-		bDarkB.setSelected(Boolean.valueOf(UserSettings.get(booksColorTitleJLabel.getText()).get(bDarkB.getText())));
-		booksColor.add(bAutoB);
-		booksColor.add(bLightB);
-		booksColor.add(bDarkB);
+		bDarkB.setSelected(UserSettings.get(0)[2].equals("Dark") ? true : false);
+		bDarkB.setActionCommand("Dark");
+
+		groupBooksColor = new ButtonGroup();
+		groupBooksColor.add(bAutoB);
+		groupBooksColor.add(bLightB);
+		groupBooksColor.add(bDarkB);
 
 		if (bAutoS.isSelected()) {
 			bookColor = bAutoS.getActionCommand();
@@ -731,23 +709,20 @@ public class Window2DLibrary extends JFrame {
 		bLeanS.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bNotLeanS.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		bLeanS.setOpaque(false);
-		bLeanS.setSelected(Boolean.valueOf(UserSettings.get(leaningModeTitleJLabel.getText()).get(bLeanS.getText())));
+		bLeanS.setSelected(UserSettings.get(0)[3].equals("leaned") ? true : false);
+		bLeanS.setActionCommand("leaned");
 		bNotLeanS.setOpaque(false);
-		bNotLeanS.setSelected(
-				Boolean.valueOf(UserSettings.get(leaningModeTitleJLabel.getText()).get(bNotLeanS.getText())));
-
+		bNotLeanS.setSelected(UserSettings.get(0)[3].equals("not leaned") ? true : false);
+		bNotLeanS.setActionCommand("not leaned");
+		groupPositionBook = new ButtonGroup();
+		groupPositionBook.add(bLeanS);
+		groupPositionBook.add(bNotLeanS);
 		leaning = bLeanS.isSelected();
-		leanButtonGroup.add(bLeanS);
-		leanButtonGroup.add(bNotLeanS);
 
 		sortAutoButton = new JRadioButton("Auto");
 		sortYearButton = new JRadioButton("Year");
 		sortAuthorButton = new JRadioButton("Author");
 		sortTitleButton = new JRadioButton("Title");
-		sortButtonGroup.add(sortAutoButton);
-		sortButtonGroup.add(sortYearButton);
-		sortButtonGroup.add(sortAuthorButton);
-		sortButtonGroup.add(sortTitleButton);
 		sortAutoButton.addActionListener(new SortButtonListener());
 		sortYearButton.addActionListener(new SortButtonListener());
 		sortAuthorButton.addActionListener(new SortButtonListener());
@@ -757,27 +732,26 @@ public class Window2DLibrary extends JFrame {
 		sortAuthorButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortTitleButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAutoButton.setOpaque(false);
-		sortAutoButton.setSelected(
-				Boolean.valueOf(UserSettings.get(sortTitleJLabel.getText()).get(sortAutoButton.getText())));
-
+		sortAutoButton.setSelected(UserSettings.get(0)[4].equals("Auto") ? true : false);
+		sortAutoButton.setActionCommand("Auto");
 		sortYearButton.setOpaque(false);
-		sortYearButton.setSelected(
-				Boolean.valueOf(UserSettings.get(sortTitleJLabel.getText()).get(sortYearButton.getText())));
-
+		sortYearButton.setSelected(UserSettings.get(0)[4].equals("Year") ? true : false);
+		sortYearButton.setActionCommand("Year");
 		sortAuthorButton.setOpaque(false);
-		sortAuthorButton.setSelected(
-				Boolean.valueOf(UserSettings.get(sortTitleJLabel.getText()).get(sortAuthorButton.getText())));
-
+		sortAuthorButton.setSelected(UserSettings.get(0)[4].equals("Author") ? true : false);
+		sortAuthorButton.setActionCommand("Author");
 		sortTitleButton.setOpaque(false);
-		sortTitleButton.setSelected(
-				Boolean.valueOf(UserSettings.get(sortTitleJLabel.getText()).get(sortTitleButton.getText())));
-
+		sortTitleButton.setSelected(UserSettings.get(0)[4].equals("Title") ? true : false);
+		sortTitleButton.setActionCommand("Title");
+		groupSortBy = new ButtonGroup();
+		groupSortBy.add(sortAutoButton);
+		groupSortBy.add(sortYearButton);
+		groupSortBy.add(sortAuthorButton);
+		groupSortBy.add(sortTitleButton);
 		sortAscendingYearButton = new JCheckBox("Most recent first (sort by year)");
 		sortAscendingYearButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAscendingYearButton.setOpaque(false);
-		sortAscendingYearButton.setSelected(
-				Boolean.valueOf(UserSettings.get(sortTitleJLabel.getText()).get(sortAscendingYearButton.getText())));
-
+		sortAscendingYearButton.setSelected(UserSettings.get(0)[5].equals("sort ascending") ? true : false);
 		if (sortAutoButton.isSelected()) {
 			sort = sortAutoButton.getActionCommand();
 		} else if (sortYearButton.isSelected()) {
