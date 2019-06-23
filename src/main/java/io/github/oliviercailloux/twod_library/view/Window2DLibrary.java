@@ -219,14 +219,6 @@ public class Window2DLibrary extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String s = e.getActionCommand();
 			if (s.equals("Generate my library") || s.equals("Reload my library now")) {
-				System.out.println("lacazette");
-				System.out.println(groupBackGroundColor.getSelection().getActionCommand());
-				System.out.println(groupShelvesColor.getSelection().getActionCommand());
-				System.out.println(groupBooksColor.getSelection().getActionCommand());
-				System.out.println(groupPositionBook.getSelection().getActionCommand());
-				System.out.println(groupSortBy.getSelection().getActionCommand());
-				System.out.println(sortAscendingYearButton.getActionCommand());
-				System.out.println(numberBooksPerShelfTextField.getText());
 				try {
 					updateSVGLibrary();
 				} catch (ParserConfigurationException e1) {
@@ -239,7 +231,6 @@ public class Window2DLibrary extends JFrame {
 						groupSortBy.getSelection().getActionCommand(),
 						(sortAscendingYearButton.isSelected()) ? "sort ascending" : "not sort ascending",
 						numberBooksPerShelfTextField.getText());
-				System.out.println(csvLine);
 				try {
 					CSVUtils.writeIntoCSVFile("UserPreference.csv", Arrays.asList(csvLine));
 				} catch (URISyntaxException e1) {
