@@ -222,20 +222,11 @@ public class Window2DLibrary<HTLMEditorKit> extends JFrame {
 			if (s.equals("Generate my library") || s.equals("Reload my library now")) {
 				try {
 					updateSVGLibrary();
-				} catch (ParserConfigurationException ex) {
-					LOGGER.error("Impossible to refresh the button after the last update of library");
-					ex.printStackTrace();
-				} catch (URISyntaxException e1) {
-					e1.printStackTrace();
-				} catch (ClassNotFoundException e1) {
-					e1.printStackTrace();
-				} catch (InstantiationException e1) {
-					e1.printStackTrace();
-				} catch (IllegalAccessException e1) {
-					e1.printStackTrace();
-				} catch (ClassCastException e1) {
-					e1.printStackTrace();
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException
+						| ParserConfigurationException | URISyntaxException e1) {
+					throw new RuntimeException();
 				}
+
 			}
 
 		}
@@ -1049,7 +1040,7 @@ public class Window2DLibrary<HTLMEditorKit> extends JFrame {
 		pCenter.removeAll();
 		JSVGCanvas svgCanvas = new JSVGCanvas();
 
-		String imgsrc = "file:" + DataFile.class.getResource("library.html").toURI().getPath();
+		String imgsrc = "file:" + DataFile.class.getResource("library.svg").toURI().getPath();
 		svgCanvas.setURI(imgsrc);
 		svgCanvas.addLinkActivationListener(new LinkActivationListener() {
 

@@ -7,16 +7,15 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -36,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 
@@ -61,10 +61,8 @@ public class SVGLibrary {
 		this.graphics = generateSVG();
 	}
 
-	public String getStringPathForSVGDocument() throws MalformedURLException {
-		return new File(getClass().getClassLoader()
-				.getResource("io/github/oliviercailloux/twod_library/controller/library.svg").getFile()).toString()
-						.replaceAll("%20", " ");
+	public String getStringPathForSVGDocument() throws MalformedURLException, URISyntaxException {
+		return DataFile.class.getResource("library.svg").toURI().getPath();
 	}
 
 	/***
@@ -93,9 +91,10 @@ public class SVGLibrary {
 	 * @param leaning
 	 * @param string
 	 * @throws IOException
+	 * @throws URISyntaxException
 	 */
 	public void generate(boolean leaning, String bkColor, String bColor, String sColor, String string)
-			throws IOException {
+			throws IOException, URISyntaxException {
 
 		int dimCanvasX = (int) ((int) library.getFrameSizeW() - 0.055 * library.getFrameSizeW());
 		int dimCanvasY = 1500;
@@ -122,15 +121,9 @@ public class SVGLibrary {
 		drawBooksAndTitles(spaceBetweenShelves, dimCanvasX, thiknessEdges, shelfWidth, leaning, shelves, bColor);
 		// Finally, stream out SVG using UTF-8 encoding.
 		boolean useCSS = true; // we want to use CSS style attributes
-		try (Writer out = new OutputStreamWriter(new FileOutputStream(getStringPathForSVGDocument()), "UTF-8")) {
-			graphics.stream(out, useCSS);
-		} catch (UnsupportedEncodingException e) {
-			throw e;
-		} catch (FileNotFoundException e) {
-			throw e;
-		} catch (IOException e) {
-			throw e;
-		}
+		Writer out = new OutputStreamWriter(new FileOutputStream(getStringPathForSVGDocument()), "UTF-8");
+		graphics.stream(out, useCSS);
+		out.close();
 		String content = this.svgLinkable(getStringPathForSVGDocument());
 		IOUtils.write(content, new FileOutputStream(getStringPathForSVGDocument()), "UTF-8");
 	}
@@ -139,10 +132,12 @@ public class SVGLibrary {
 	 * This is to replace "&lt;" by "<" and "&gt;" by ">" because I did not found
 	 * how to avoid converting < into &lt; and > into &gt;
 	 * 
+	 * @throws URISyntaxException
+	 * 
 	 * @see mido-svg project on DrawerSVGGen class
 	 **/
 
-	public String svgLinkable(String file) throws FileNotFoundException, IOException {
+	public String svgLinkable(String file) throws FileNotFoundException, IOException, URISyntaxException {
 		String content = IOUtils.toString(new FileInputStream(getStringPathForSVGDocument()), "UTF-8");
 		content = content.replaceAll("&lt;", "<");
 		content = content.replaceAll("&gt;", ">");
