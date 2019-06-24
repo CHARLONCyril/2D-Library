@@ -243,39 +243,36 @@ public class Window2DLibrary extends JFrame {
 	}
 
 	class PrintSVGListener implements ActionListener {
-		private JFrame f;
-
-		public PrintSVGListener(Window2DLibrary window2dLibrary) {
-			f = window2dLibrary;
-		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			// source:
+			// http://www.java2s.com/Code/JavaAPI/javax.print/DocFlavorINPUTSTREAMGIF.htm
 			/** Creates a new instance of PrintImage */
+			PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+			pras.add(new Copies(1));
+
+			PrintService pss[] = PrintServiceLookup.lookupPrintServices(DocFlavor.INPUT_STREAM.GIF, pras);
+
+			if (pss.length == 0)
+				throw new RuntimeException("No printer services available.");
+
+			PrintService ps = pss[0];
+			System.out.println("Printing to " + ps);
+
+			DocPrintJob job = ps.createPrintJob();
+
+			FileInputStream fin;
 			try {
-				PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
-				pras.add(new Copies(1));
+				fin = new FileInputStream("C:/twod_library/controller/library.png");
 
-				PrintService pss[] = PrintServiceLookup.lookupPrintServices(DocFlavor.INPUT_STREAM.GIF, pras);
-
-				if (pss.length == 0)
-					throw new RuntimeException("No printer services available.");
-
-				PrintService ps = pss[0];
-				System.out.println("Printing to " + ps);
-
-				DocPrintJob job = ps.createPrintJob();
-
-				FileInputStream fin = new FileInputStream("C:/twod_library/controller/library.png");
 				Doc doc = new SimpleDoc(fin, DocFlavor.INPUT_STREAM.GIF, null);
 
 				job.print(doc, pras);
 
 				fin.close();
-			} catch (IOException ie) {
-				ie.printStackTrace();
-			} catch (PrintException pe) {
-				pe.printStackTrace();
+			} catch (PrintException | IOException e1) {
+				throw new RuntimeException();
 			}
 		}
 	}
@@ -1006,7 +1003,7 @@ public class Window2DLibrary extends JFrame {
 		generateButton = new JButton("Generate my library");
 		printSVGDocument = new JButton("Print my library");
 		generateButton.addActionListener(new GenerateButtonListener());
-		printSVGDocument.addActionListener(new PrintSVGListener(this));
+		printSVGDocument.addActionListener(new PrintSVGListener());
 		southPanel.add(generateButton);
 		southPanel.add(printSVGDocument);
 		return southPanel;
