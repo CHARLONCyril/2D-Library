@@ -1,20 +1,22 @@
 package io.github.oliviercailloux.twod_library.model;
 
+import com.univocity.parsers.annotations.Parsed;
+
 public class SearchPreferences {
+	@Parsed(field = "Background_color")
 	private ColorShade backgroundColor;
+	@Parsed(field = "Shelves_Color")
 	private ColorShade bookColor;
+	@Parsed(field = "Books_Color")
 	private ColorShade shelvesColor;
+	@Parsed(field = "Position_of_books")
 	private BookPosition bookPosition;
+	@Parsed(field = "Sort_books_by")
 	private SortType sortType;
+	@Parsed(field = "Books_per_shelf")
 	private int nbBookPerShelf;
 
-	public SearchPreferences(ColorShade bk, ColorShade bc, ColorShade sh, BookPosition bp, SortType s, int nbBook) {
-		this.backgroundColor = bk;
-		this.bookColor = bc;
-		this.shelvesColor = sh;
-		this.bookPosition = bp;
-		this.sortType = s;
-		this.nbBookPerShelf = nbBook;
+	public SearchPreferences() {
 	}
 
 	public ColorShade getBackgroundColor() {
