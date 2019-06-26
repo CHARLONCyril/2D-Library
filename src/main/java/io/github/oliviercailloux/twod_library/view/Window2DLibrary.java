@@ -1129,7 +1129,7 @@ public class Window2DLibrary extends JFrame {
 	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException {
 
 		try {
-			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor);
+			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor, backgroundColor);
 		} catch (IOException e) {
 			LOGGER.error(
 					"Error when we generateButton the library with ordinary field : Some parameters seems npt ok PLEASE CHECK GENERATE METHOD");
