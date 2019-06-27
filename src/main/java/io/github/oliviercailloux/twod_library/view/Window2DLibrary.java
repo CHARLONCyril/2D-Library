@@ -235,7 +235,7 @@ public class Window2DLibrary extends JFrame {
 					updateSVGLibrary();
 				} catch (ParserConfigurationException | IOException ex) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
-					ex.printStackTrace();
+					throw new RuntimeException();
 				}
 			}
 
@@ -365,12 +365,9 @@ public class Window2DLibrary extends JFrame {
 					} else {
 						updateDrawingLibrary(svgLibrary);
 					}
-				} catch (ParserConfigurationException ex) {
+				} catch (ParserConfigurationException | IOException e1) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
-					ex.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+					throw new RuntimeException();
 				}
 			}
 		}
