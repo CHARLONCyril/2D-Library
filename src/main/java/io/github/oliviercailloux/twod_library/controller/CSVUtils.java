@@ -33,14 +33,14 @@ public class CSVUtils {
 	 * @see <a href=
 	 *      "https://subscription.packtpub.com/book/big_data_and_business_intelligence/9781787122536/1/ch01lvl1sec15/parsing-comma-separated-value-csv-files-using-univocity">parsing-comma-separated-value-csv-files-using-univocity</a>
 	 */
-	public static List<SearchPreferences> parseCSVFile(String fileName) throws URISyntaxException {
+	public static List<SearchPreferences> parseCSVFile(File fileName) throws URISyntaxException {
 		CsvParserSettings parserSettings = new CsvParserSettings();
 		parserSettings.setLineSeparatorDetectionEnabled(true);
 		parserSettings.setHeaderExtractionEnabled(true);
 		BeanListProcessor<SearchPreferences> rowProcessor = new BeanListProcessor<>(SearchPreferences.class);
 		parserSettings.setProcessor(rowProcessor);
 		CsvParser parser = new CsvParser(parserSettings);
-		parser.parse(new File(getPathLocation() + fileName));
+		parser.parse(fileName);
 		return rowProcessor.getBeans();
 	}
 
@@ -52,7 +52,7 @@ public class CSVUtils {
 	 * @see <a href=
 	 *      "https://www.univocity.com/pages/univocity_parsers_writing.html#writing">univocity_parsers_writing.html#writing</a>
 	 */
-	public static void writeIntoCSVFile(String fileName, SearchPreferences... list) throws URISyntaxException {
+	public static void writeIntoCSVFile(String fileName, List<SearchPreferences> list) throws URISyntaxException {
 		CsvWriterSettings settings = new CsvWriterSettings();
 		settings.setRowWriterProcessor(new BeanWriterProcessor<>(SearchPreferences.class));
 		settings.setHeaders("Background_color", "Shelves_Color", "Books_Color", "Position_of_books", "Sort_books_by",
@@ -63,16 +63,16 @@ public class CSVUtils {
 		writer.close();
 	}
 
-	public static String getPathLocation() {
-		return "C:/twod_library/controller/";
+	public static Path getPathLocation() {
+		return Paths.get(new File("C:/twod_library/controller/").toURI());
 	}
 
 	public static void initializeSettingFile(String fileName) throws IOException, URISyntaxException {
-		String directoryName = getPathLocation();
-		File directory = new File(directoryName);
+		Path directoryName = getPathLocation();
+		File directory = new File(directoryName.toString());
 		if (!directory.exists()) {
 			directory.mkdirs();
-			Path pathSourceFile = Paths.get(getURLSettingFile(fileName));
+			Path pathSourceFile = Paths.get(getURLSettingFile());
 			Path pathDestFile = Paths.get(getPathLocation() + fileName);
 			Files.copy(pathSourceFile, pathDestFile);
 		} else {
@@ -80,8 +80,8 @@ public class CSVUtils {
 		}
 	}
 
-	public static URI getURLSettingFile(String fileName) throws URISyntaxException {
-		return CSVUtils.class.getResource(fileName).toURI();
+	public static URI getURLSettingFile() throws URISyntaxException {
+		return CSVUtils.class.getResource("DefaultUserPreference.csv").toURI();
 	}
 
 }
