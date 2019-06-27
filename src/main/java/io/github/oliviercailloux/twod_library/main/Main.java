@@ -8,6 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.oliviercailloux.twod_library.controller.CSVUtils;
 import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Library;
 import io.github.oliviercailloux.twod_library.view.SVGLibrary;
@@ -21,6 +22,7 @@ public class Main {
 		DataFile dataFile = new DataFile();
 		Library library = new Library(dataFile.read(), 18);
 		SVGLibrary svgLibrary = new SVGLibrary(library);
+		CSVUtils.initializeSettingFile("UserPreferences.csv");
 		new Window2DLibrary("2D_LIBRARY PROJECT", svgLibrary);
 	}
 

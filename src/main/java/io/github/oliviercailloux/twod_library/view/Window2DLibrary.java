@@ -225,13 +225,11 @@ public class Window2DLibrary extends JFrame {
 			if (s.equals("Generate my library") || s.equals("Reload my library now")) {
 				try {
 					updateSVGLibrary();
-					UserSettings.setBackgroundColor(getBackgroundColorShade());
-					UserSettings.setBookColor(getBookColorShade());
-					UserSettings.setShelvesColor(getShelvesColorShade());
-					UserSettings.setBookPosition(getBookPosition());
-					UserSettings.setNbBookPerShelf(getNbBookPerShelf());
-					UserSettings.setSortType(getSortType());
-					CSVUtils.writeIntoCSVFile("UserPreference.csv", UserSettings);
+					List<SearchPreferences> pref = new ArrayList<SearchPreferences>();
+					SearchPreferences sp = new SearchPreferences(getBackgroundColorShade(), getBookColorShade(),
+							getShelvesColorShade(), getBookPosition(), getSortType(), getNbBookPerShelf());
+					pref.add(sp);
+					CSVUtils.writeIntoCSVFile("UserPreference.csv", pref);
 				} catch (URISyntaxException | ParserConfigurationException e1) {
 					throw new RuntimeException(e1);
 				}
