@@ -8,10 +8,11 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -36,15 +37,22 @@ import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.glassfish.jersey.internal.guava.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.oliviercailloux.twod_library.controller.ConnectionToCongressLibrary;
+import com.google.common.base.MoreObjects;
+
 import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
+import io.github.oliviercailloux.twod_library.model.MakeSearch;
+import io.github.oliviercailloux.twod_library.model.PublicationRange;
+import io.github.oliviercailloux.twod_library.model.SearchData;
 
 public class Window2DLibrary extends JFrame {
+
+	private MakeSearch s = new MakeSearch();
 
 	class AddBookButtonListener implements ActionListener {
 
@@ -176,6 +184,42 @@ public class Window2DLibrary extends JFrame {
 		}
 	}
 
+	class PlaceHolder implements FocusListener {
+		private JTextField textArea;
+		private String message;
+
+		public PlaceHolder(JTextField t, String m) {
+			textArea = t;
+			message = m;
+
+		}
+
+		@Override
+		public void focusLost(FocusEvent e) {
+			if (getTextArea().getText().trim().equals("")) {
+				getTextArea().setText(getMessage());
+			}
+
+		}
+
+		@Override
+		public void focusGained(FocusEvent e) {
+			if (getTextArea().getText().trim().equals(getMessage())) {
+				getTextArea().setText("");
+			}
+
+		}
+
+		public JTextField getTextArea() {
+			return textArea;
+		}
+
+		public String getMessage() {
+			return message;
+		}
+
+	}
+
 	class BooksColorButtonListener implements ActionListener {
 
 		private JRadioButton bAutoB, bLightB, bDarkB;
@@ -239,53 +283,6 @@ public class Window2DLibrary extends JFrame {
 		}
 	}
 
-	class LessBookPerShelfListener implements ActionListener {
-
-		private int nbBooksPerShelf;
-
-		private JFormattedTextField numberBooksPerShelfTextField;
-
-		public LessBookPerShelfListener(int nbBooksPerShelf, JFormattedTextField numberBooksPerShelfTextField) {
-			this.nbBooksPerShelf = nbBooksPerShelf;
-			this.numberBooksPerShelfTextField = numberBooksPerShelfTextField;
-		}
-
-		/**
-		 * function launched when the user performs an action
-		 */
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (nbBooksPerShelf != 1) {
-				nbBooksPerShelf--;
-				numberBooksPerShelfTextField.setValue(nbBooksPerShelf);
-			}
-		}
-	}
-
-	class MoreBookPerShelfListener implements ActionListener {
-
-		private int nbBooksPerShelf;
-
-		private JFormattedTextField numberBooksPerShelfTextField;
-
-		public MoreBookPerShelfListener(int nbBooksPerShelf, JFormattedTextField numberBooksPerShelfTextField) {
-			this.nbBooksPerShelf = nbBooksPerShelf;
-			this.numberBooksPerShelfTextField = numberBooksPerShelfTextField;
-		}
-
-		/**
-		 * function launched when the user performs an action
-		 */
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			if (nbBooksPerShelf != 18) {
-				nbBooksPerShelf++;
-				numberBooksPerShelfTextField.setValue(nbBooksPerShelf);
-			}
-		}
-	}
-
 	class removeBookButtonListener implements ActionListener {
 
 		private ButtonGroup booksButtonGroup;
@@ -321,32 +318,126 @@ public class Window2DLibrary extends JFrame {
 
 	class SearchButtonListener implements ActionListener {
 
-		private JPanel pBCenter;
+		private JComboBox<String> searchParamComboBox;
+		private JTextField qteBookSerach;
+		private JTextField searchAuthorField;
+		private JTextField searchTitleField;
+		private JTextField minRangeField;
+		private JTextField maxRangeField;
 
-		private JTextField searchTextField, titleTextField, lastNameTextField, firstNameTextField;
-
-		public SearchButtonListener(JPanel jpanel, JTextField searchTextField, JTextField titleTextField,
-				JTextField lastNameTextField, JTextField firstNameTextField) {
-			this.pBCenter = jpanel;
-			this.searchTextField = searchTextField;
-			this.titleTextField = titleTextField;
-			this.lastNameTextField = lastNameTextField;
-			this.firstNameTextField = firstNameTextField;
+		public SearchButtonListener(JComboBox<String> searchParamComboBox2, JTextField searchAuthorField,
+				JTextField searchTitleField, JTextField minRangeField, JTextField maxRangeField,
+				JTextField qteBookSerach2) {
+			this.setSearchParamComboBox(searchParamComboBox2);
+			this.setSearchAuthorField(searchAuthorField);
+			this.setSearchTitleField(searchTitleField);
+			this.setMinRangeField(minRangeField);
+			this.setMaxRangeField(maxRangeField);
+			this.setQteBookSerach(qteBookSerach2);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			String line = searchTextField.getText();
-			ConnectionToCongressLibrary connexion = new ConnectionToCongressLibrary(line);
+			if (getSearchAuthorField().equals("Author") && getSearchTitleField().equals("Title")
+					&& getMinRangeField().equals("FROM") && getMaxRangeField().equals("TO")) {
+				JOptionPane.showMessageDialog(optionsJPanel, "Give some search criteria");
+			} else {
+				SearchData d = SearchData.createSearchDataObject(
+						getSearchAuthorField().equals("Author") ? null : getSearchAuthorField(),
+						PublicationRange.createPublicationRange(
+								!getMinRangeField().equals("FROM") && Integer.valueOf(getMinRangeField()) > 0
+										? Integer.valueOf(getMinRangeField())
+										: null,
+								!getMaxRangeField().equals("TO") && Integer.valueOf(getMaxRangeField()) > 0
+										? Integer.valueOf(getMaxRangeField())
+										: null),
+						getSearchTitleField().equals("Title") ? null : getSearchTitleField());
+				try {
+					List<Book> resultSearch = s.getResultSearchData(d, dataFile.read());
+					if (!getQteBookSerach().equals("Searching Not limitted")) {
+						Preconditions.checkArgument(Integer.valueOf(getQteBookSerach()) > 0);
+						int indice = (Integer.valueOf(getQteBookSerach()) > resultSearch.size()) ? resultSearch.size()
+								: Integer.valueOf(getQteBookSerach());
+						resultSearch = resultSearch.subList(0, indice);
+					}
+					svgLibrary.setLibrary(
+							new Library(resultSearch, Integer.valueOf(numberBooksPerShelfTextField.getText())));
 
-			String tabResult[] = new String[3];
-			tabResult = connexion.extractData();
-			titleTextField.setText(tabResult[0]);
-			String[] np = tabResult[1].split(",");
-			lastNameTextField.setText(np[0]);
-			firstNameTextField.setText(np[1]);
-			JOptionPane.showMessageDialog(pBCenter, "Search result");
+					if (svgLibrary.getLibrary().getListOfAllTheBooks().size() == 0) {
+						JOptionPane.showMessageDialog(optionsJPanel,
+								"We didn't found anything in your library with these parameter. Library didn't change");
+					} else {
+						updateDrawingLibrary(svgLibrary);
+					}
+				} catch (ParserConfigurationException ex) {
+					LOGGER.error("Impossible to refresh the button after the last update of library");
+					ex.printStackTrace();
+				}
+			}
 		}
+
+		public String getSearchAuthorField() {
+			return searchAuthorField.getText();
+		}
+
+		public void setSearchAuthorField(JTextField searchTextField) {
+			this.searchAuthorField = searchTextField;
+		}
+
+		public String getSearchParamComboBox() {
+			return searchParamComboBox.getSelectedItem().toString();
+		}
+
+		public void setSearchParamComboBox(JComboBox<String> searchParamComboBox) {
+			this.searchParamComboBox = searchParamComboBox;
+		}
+
+		public String getUserSearch() {
+			String msg = "";
+			if (getSearchAuthorField() != null)
+				msg += " " + getSearchAuthorField();
+			if (getSearchTitleField() != null)
+				msg += " " + getSearchTitleField();
+			return msg;
+		}
+
+		public String toString() {
+			return MoreObjects.toStringHelper(this).add("User Search", getUserSearch())
+					.add("Type of search", getSearchParamComboBox()).toString();
+		}
+
+		public String getQteBookSerach() {
+			return qteBookSerach.getText();
+		}
+
+		public void setQteBookSerach(JTextField qteBookSerach2) {
+			this.qteBookSerach = qteBookSerach2;
+		}
+
+		public String getSearchTitleField() {
+			return searchTitleField.getText();
+		}
+
+		public void setSearchTitleField(JTextField searchTitleField) {
+			this.searchTitleField = searchTitleField;
+		}
+
+		public String getMinRangeField() {
+			return minRangeField.getText();
+		}
+
+		public void setMinRangeField(JTextField minRangeField) {
+			this.minRangeField = minRangeField;
+		}
+
+		public String getMaxRangeField() {
+			return maxRangeField.getText();
+		}
+
+		public void setMaxRangeField(JTextField maxRangeField) {
+			this.maxRangeField = maxRangeField;
+		}
+
 	}
 
 	class ShelvesColorButtonListener implements ActionListener {
@@ -407,8 +498,8 @@ public class Window2DLibrary extends JFrame {
 
 	private JPanel pCenter, addBookJPanel, optionsJPanel;
 
-	private JTextField searchTextField, firstNameTextField, lastNameTextField, titleTextField, yearTextField,
-			dimXTextField, dimYTextField;
+	private JTextField searchAuthorField, searchTitleField, minRangeField, maxRangeField, firstNameTextField,
+			lastNameTextField, titleTextField, yearTextField, dimXTextField, dimYTextField;
 
 	private JCheckBox sortAscendingYearButton;
 
@@ -422,7 +513,7 @@ public class Window2DLibrary extends JFrame {
 
 	boolean leaning = true;
 
-	int nbBooksPerShelf = 18;
+	int nbBooksPerShelf = 10;
 
 	JPanel pDCenter;
 
@@ -514,8 +605,9 @@ public class Window2DLibrary extends JFrame {
 	 */
 	public JPanel getCenterPanelOptions() {
 
+		final int CAPACITY_MIN_PER_SHELF = 5;
+		final int CAPACITY_MAX_PER_SHELF = 20;
 		optionsJPanel = new JPanel();
-		Image image = null;
 		JPanel optionsNames = new JPanel(new GridLayout(0, 2, 40, 30));
 		JPanel parameters = new JPanel();
 		JPanel choice = new JPanel();
@@ -664,10 +756,66 @@ public class Window2DLibrary extends JFrame {
 		sortAscendingYearButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAscendingYearButton.setOpaque(false);
 
+		numberBooksPerShelfTextField.addFocusListener(new FocusListener() {
+
+			@Override
+			public void focusLost(FocusEvent e) {
+				if (Integer.parseInt(numberBooksPerShelfTextField.getText()) >= CAPACITY_MAX_PER_SHELF) {
+					numberBooksPerShelfTextField.setText(String.valueOf(CAPACITY_MAX_PER_SHELF));
+				} else if (Integer.parseInt(numberBooksPerShelfTextField.getText()) <= CAPACITY_MIN_PER_SHELF) {
+					numberBooksPerShelfTextField.setText(String.valueOf(CAPACITY_MIN_PER_SHELF));
+				} else {
+					numberBooksPerShelfTextField.setText(numberBooksPerShelfTextField.getText());
+				}
+			}
+
+			@Override
+			public void focusGained(FocusEvent e) {
+			}
+
+		});
+
 		JButton lessBookPerS = new JButton("Less");
-		lessBookPerS.addActionListener(new LessBookPerShelfListener(nbBooksPerShelf, numberBooksPerShelfTextField));
 		JButton moreBookPerS = new JButton("More");
-		moreBookPerS.addActionListener(new MoreBookPerShelfListener(nbBooksPerShelf, numberBooksPerShelfTextField));
+		ActionListener actionListener = new ActionListener() {
+			/**
+			 * For the less and more button we used :
+			 * https://stackoverflow.com/questions/7300135/how-to-use-an-action-listener-to-check-if-a-certain-button-was-clicked
+			 * 
+			 */
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				switch (e.getActionCommand()) {
+				case "More":
+					if (getFieldValue() >= CAPACITY_MAX_PER_SHELF) {
+						JOptionPane.showMessageDialog(optionsJPanel, "Too many books");
+					} else {
+						setFieldValue(getFieldValue() + 1);
+					}
+					break;
+				case "Less":
+					if (getFieldValue() <= CAPACITY_MIN_PER_SHELF) {
+						JOptionPane.showMessageDialog(optionsJPanel,
+								"Your library can not have less than 5 books because it is not visible");
+					} else {
+						setFieldValue(getFieldValue() - 1);
+					}
+					break;
+				}
+			}
+
+			private void setFieldValue(int value) {
+				numberBooksPerShelfTextField.setText(String.valueOf(value));
+			}
+
+			private int getFieldValue() {
+				return Integer.parseInt(numberBooksPerShelfTextField.getText());
+			}
+
+		};
+		moreBookPerS.addActionListener(actionListener);
+		lessBookPerS.addActionListener(actionListener);
 
 		backgroundColorTitleJPanel.add(backgroundColorTitleJLabel);
 		shelvesColorTitleJPanel.add(shelvesColorTitleJLabel);
@@ -757,12 +905,19 @@ public class Window2DLibrary extends JFrame {
 
 		JLabel titleSecondColumn = new JLabel("");
 		titleSecondColumn.setFont(new Font("Arial", Font.ITALIC, 50));
-		searchTextField = new JTextField();
-		searchTextField.setBounds(10, 10, 200, 200);
-		searchTextField.setPreferredSize(new Dimension(160, 40));
-
+		searchAuthorField = new JTextField("Author");
+		searchAuthorField.setColumns(10);
+		searchAuthorField.addFocusListener(new PlaceHolder(searchAuthorField, searchAuthorField.getText()));
+		searchTitleField = new JTextField("Title");
+		searchTitleField.setColumns(10);
+		searchTitleField.addFocusListener(new PlaceHolder(searchTitleField, searchTitleField.getText()));
+		minRangeField = new JTextField("FROM");
+		minRangeField.setColumns(5);
+		minRangeField.addFocusListener(new PlaceHolder(minRangeField, minRangeField.getText()));
+		maxRangeField = new JTextField("TO");
+		maxRangeField.setColumns(5);
+		maxRangeField.addFocusListener(new PlaceHolder(maxRangeField, maxRangeField.getText()));
 		JButton searchButton = new JButton("Search");
-
 		firstNameTextField = new JTextField();
 		firstNameTextField.setBounds(5, 5, 200, 200);
 		lastNameTextField = new JTextField();
@@ -781,9 +936,19 @@ public class Window2DLibrary extends JFrame {
 		bookFormJPanel.add(titleFirstColumn);
 		bookFormJPanel.add(titleSecondColumn);
 		bookFormJPanel.add(searchJLabel);
-		searchJPanel.add(searchTextField);
+
+		searchJPanel.add(searchAuthorField);
+		searchJPanel.add(searchTitleField);
+		searchJPanel.add(minRangeField);
+		searchJPanel.add(maxRangeField);
+		JTextField qteBookSerach = new JTextField("Searching Not limitted");
+		qteBookSerach.setColumns(15);
+		qteBookSerach.addFocusListener(new PlaceHolder(qteBookSerach, qteBookSerach.getText()));
+		searchJPanel.add(qteBookSerach);
+
 		searchJPanel.add(searchButton);
 		bookFormJPanel.add(searchJPanel);
+
 		bookFormJPanel.add(firstNameJLabel);
 		bookFormJPanel.add(firstNameTextField);
 		bookFormJPanel.add(lastNameJLabel);
@@ -802,10 +967,11 @@ public class Window2DLibrary extends JFrame {
 		JButton addBookButton = new JButton("Add");
 		bookFormJPanel.add(addBookButton);
 		addBookJPanel.add(bookFormJPanel);
-		searchButton.addActionListener(new SearchButtonListener(addBookJPanel, searchTextField, titleTextField,
-				lastNameTextField, firstNameTextField));
+		searchButton.addActionListener(new SearchButtonListener(colorComboBox, searchAuthorField, searchTitleField,
+				minRangeField, maxRangeField, qteBookSerach));
 		addBookButton.addActionListener(new AddBookButtonListener(colorComboBox, addBookJPanel, bookFormJPanel, tabPane,
 				firstNameTextField, lastNameTextField, titleTextField, yearTextField, dimXTextField, dimYTextField));
+
 		return addBookJPanel;
 
 	}
@@ -906,22 +1072,31 @@ public class Window2DLibrary extends JFrame {
 
 		switch (sort) {
 		case "Author":
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByAuthor(), nbBooksPerShelf));
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByAuthor(),
+					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		case "Title":
 			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));
+
 			break;
 		case "Year":
 			boolean rising = !sortAscendingYearButton.isSelected();
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByYear(rising), nbBooksPerShelf));
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByYear(rising),
+					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		default:
 			svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
 			break;
+
 		}
+		updateDrawingLibrary(svgLibrary);
+	}
+
+	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException {
 
 		try {
-			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor);
+			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor,
+					numberBooksPerShelfTextField.getText());
 		} catch (IOException e) {
 			LOGGER.error(
 					"Error when we generateButton the library with ordinary field : Some parameters seems npt ok PLEASE CHECK GENERATE METHOD");
@@ -937,7 +1112,6 @@ public class Window2DLibrary extends JFrame {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 		pCenter.removeAll();
 		pCenter.revalidate();
 		JLabel libImage = new JLabel();
@@ -949,7 +1123,6 @@ public class Window2DLibrary extends JFrame {
 		pCenter.updateUI();
 		File fichier = new File(svgLibrary.getNewImage());
 		fichier.delete();
-
 	}
 
 }
