@@ -7,12 +7,15 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.Shape;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.nio.file.Paths;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,11 +29,13 @@ import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.PNGTranscoder;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 
+import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 
@@ -40,9 +45,7 @@ import io.github.oliviercailloux.twod_library.model.Library;
 public class SVGLibrary {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(SVGLibrary.class);
-
 	private SVGGraphics2D graphics;
-
 	private int lastColorIndex = -1;
 
 	private Library library;
@@ -58,17 +61,19 @@ public class SVGLibrary {
 		this.graphics = generateSVG();
 	}
 
+	public String getStringPathForSVGDocument() throws MalformedURLException, URISyntaxException {
+		return DataFile.class.getResource("library.svg").toURI().getPath();
+	}
+
 	/***
 	 * Conversion .svg to .png for create a format more standard and print it
 	 *
 	 */
 	public void convert() throws Exception {
-		String svg_URI_input = Paths.get("library.svg").toUri().toURL().toString();
-		TranscoderInput input_svg_image = new TranscoderInput(svg_URI_input);
+		TranscoderInput input_svg_image = new TranscoderInput("file:" + getStringPathForSVGDocument());
 		this.setNewImage(generate(20));// Define the name of the file
 		try (OutputStream png_ostream = new FileOutputStream(newImage)) {
 			TranscoderOutput output_png_image = new TranscoderOutput(png_ostream);
-
 			PNGTranscoder my_converter = new PNGTranscoder();
 			my_converter.transcode(input_svg_image, output_png_image);
 
@@ -84,10 +89,12 @@ public class SVGLibrary {
 	 * @param leaning
 	 * @param Library
 	 * @param leaning
-	 * @param string 
+	 * @param string
+	 * @throws IOException
+	 * @throws URISyntaxException
 	 */
 	public void generate(boolean leaning, String bkColor, String bColor, String sColor, String string)
-			throws IOException, ParserConfigurationException {
+			throws IOException, URISyntaxException {
 
 		int dimCanvasX = (int) ((int) library.getFrameSizeW() - 0.055 * library.getFrameSizeW());
 		int dimCanvasY = 1500;
@@ -112,20 +119,36 @@ public class SVGLibrary {
 
 		// get books
 		drawBooksAndTitles(spaceBetweenShelves, dimCanvasX, thiknessEdges, shelfWidth, leaning, shelves, bColor);
-
 		// Finally, stream out SVG using UTF-8 encoding.
 		boolean useCSS = true; // we want to use CSS style attributes
+		Writer out = new OutputStreamWriter(new FileOutputStream(getStringPathForSVGDocument()), "UTF-8");
+		graphics.stream(out, useCSS);
+		out.close();
+		String content = this.svgLinkable(getStringPathForSVGDocument());
+		IOUtils.write(content, new FileOutputStream(getStringPathForSVGDocument()), "UTF-8");
+	}
 
-		try (Writer out = new OutputStreamWriter(new FileOutputStream("library.svg"), "UTF-8")) {
-			graphics.stream(out, useCSS);
-		}
+	/**
+	 * This is to replace "&lt;" by "<" and "&gt;" by ">" because I did not found
+	 * how to avoid converting < into &lt; and > into &gt;
+	 * 
+	 * @throws URISyntaxException
+	 * 
+	 * @see mido-svg project on DrawerSVGGen class
+	 **/
+
+	public String svgLinkable(String file) throws FileNotFoundException, IOException, URISyntaxException {
+		String content = IOUtils.toString(new FileInputStream(getStringPathForSVGDocument()), "UTF-8");
+		content = content.replaceAll("&lt;", "<");
+		content = content.replaceAll("&gt;", ">");
+		return content = content.replaceAll("unicode=\"<\"", "unicode=\"\"");
+
 	}
 
 	/***
 	 * Generate the file's name
 	 *
-	 * @param length
-	 *            : Number of file's name characters
+	 * @param length : Number of file's name characters
 	 * @return a list of length characters
 	 */
 	public String generate(int length) {
@@ -160,8 +183,7 @@ public class SVGLibrary {
 	/***
 	 * setter of the library
 	 * 
-	 * @param library2
-	 *            the library to set
+	 * @param library2 the library to set
 	 */
 	public void setLibrary(Library library2) {
 		this.library = library2;
@@ -170,8 +192,7 @@ public class SVGLibrary {
 	/***
 	 * setter of the new image
 	 * 
-	 * @param the
-	 *            newImage to set
+	 * @param the newImage to set
 	 */
 	public void setNewImage(String newImage) {
 		this.newImage = newImage;
@@ -355,7 +376,7 @@ public class SVGLibrary {
 		result[0] = bookRotation;
 		return result;
 	}
-	
+
 	/**
 	 * Draw surround of the shape.
 	 * 
@@ -366,6 +387,11 @@ public class SVGLibrary {
 		graphics.setStroke(new BasicStroke(8f)); // set the surround size of the shape
 		graphics.setColor(Color.BLACK);
 		graphics.draw(s);
+	}
+
+	public String getInformationWithLink(String bookLink) {
+		return "<a href=\"" + "https://www.google.com/search?gs_ssp=eJzj4tDP1TdIz0srNGAEABErAus&q=" + bookLink
+				+ "\" target=\"_blank\">" + bookLink + "</a>";
 	}
 
 	/***
@@ -454,7 +480,9 @@ public class SVGLibrary {
 					.getLastName();
 			int bookYear = library.getShelves().get(indexShelf).getBooks().get(indexBook).getYear();
 			String bookString = bookTitle + " - " + authorFirstName + " " + authorLastName + " - " + bookYear;
-			drawTitle(bookRotation, bookString, bookShape, bookX, bookY, indexBook, bookHeight, bColor, bookWidth);
+			String bookStringwithLink = getInformationWithLink(bookString);
+			drawTitle(bookRotation, bookStringwithLink, bookShape, bookX, bookY, indexBook, bookHeight, bColor,
+					bookWidth, bookString);
 			if (isLastBookOfTheShelf) {
 				indexShelf++;
 				indexBook = 0;
@@ -499,11 +527,11 @@ public class SVGLibrary {
 		return shelves;
 	}
 
-	/***
+	/**
 	 * Draw the title of the book
 	 * 
 	 * @param bookRotation
-	 * @param bookString
+	 * @param bookStringwithLink
 	 * @param book
 	 * @param bookX
 	 * @param bookY
@@ -511,9 +539,10 @@ public class SVGLibrary {
 	 * @param bookHeight
 	 * @param bColor
 	 * @param bookWidth
+	 * @param bookString
 	 */
-	private void drawTitle(int bookRotation, String bookString, Shape book, double bookX, double bookY, int indexBook,
-			double bookHeight, String bColor, double bookWidth) {
+	private void drawTitle(int bookRotation, String bookStringwithLink, Shape book, double bookX, double bookY,
+			int indexBook, double bookHeight, String bColor, double bookWidth, String bookString) {
 
 		// select the black color for the title
 		if (bColor.equals("Dark")) {
@@ -521,7 +550,6 @@ public class SVGLibrary {
 		} else {
 			graphics.setPaint(Color.black);
 		}
-
 		// draw the title with the same rotation as the book
 
 		graphics.rotate(Math.toRadians(+90 + bookRotation), bookX, bookY);
@@ -535,10 +563,9 @@ public class SVGLibrary {
 				graphics.setFont(new Font("TimesRoman", Font.PLAIN, fontSize));
 			}
 		}
-		graphics.drawString(bookString,
+		graphics.drawString(bookStringwithLink,
 				(float) (bookX + (bookHeight - graphics.getFontMetrics().stringWidth(bookString)) / 2),
 				(float) (bookY - bookWidth / 4));
-
 		graphics.rotate(Math.toRadians(-90 - bookRotation), bookX, bookY);
 	}
 
@@ -558,11 +585,10 @@ public class SVGLibrary {
 		// Create an instance of org.w3c.dom.Document.
 		String svgNS = "http://www.w3.org/2000/svg";
 		Document document = domImpl.createDocument(svgNS, "svg", null);
-
 		// Create an instance of the SVG Generator.
 		SVGGeneratorContext ctx = SVGGeneratorContext.createDefault(document);
 		ctx.setEmbeddedFontsOn(true);
-		return new SVGGraphics2D(ctx, true);
+		return new SVGGraphics2D(ctx, false);
 	}
 
 	/**
