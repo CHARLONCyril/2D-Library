@@ -6,16 +6,7 @@ A Java project developed by students during the https://github.com/oliviercaillo
 
 The code is hereby published under the MIT License, with their permission.
 
-= *Plan détaillé des différentes livraisons* :
- 
-Tâches à réaliser pour la *quatrième livraison* :
-
-  * Nous allons tout d'abord corriger chacune des PR non validées afin que nous puissions les merger sur la branche master.
-  * Puis nous souhaitons que la bibliothèque générée puisse être imprimée par l'utilisateur en format poster grâce a une fonctionalité: PrintPoster.
-  
-  * Enfin nous souhaitons pouvoir générer des QR codes qui renverrons sur les descriptions des livres de chaques utilisateurs.
-
-Voici quelques propositions qui peuvent encore améliorer 2D Library: 
+=  Voici quelques propositions qui peuvent encore améliorer 2D Library pour le prochain groupe  :
 
 * Possibilité de visualiser la bibliothéque en 3D 
 
@@ -30,6 +21,18 @@ Voici quelques propositions qui peuvent encore améliorer 2D Library:
 	- Recommandation de livres similaires (meme auteur/genre) 
  
 * Possibilité d’envoyer par mail le svg avec un bouton pour partager sa bibilothéque avec ses amis
+
+
+= *Plan détaillé des différentes livraisons* :
+ 
+Tâches à réaliser pour la *quatrième livraison* :
+
+  * Nous allons tout d'abord corriger chacune des PR non validées afin que nous puissions les merger sur la branche master.
+  * Puis nous souhaitons que la bibliothèque générée puisse être imprimée par l'utilisateur en format poster grâce a une fonctionalité: PrintPoster.
+  
+  * Enfin nous souhaitons pouvoir générer des QR codes qui renverrons sur les descriptions des livres de chaques utilisateurs.
+
+
 
 *Déjà fait*:
 
