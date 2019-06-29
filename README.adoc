@@ -15,6 +15,21 @@ Tâches à réaliser pour la *quatrième livraison* :
   
   * Enfin nous souhaitons pouvoir générer des QR codes qui renverrons sur les descriptions des livres de chaques utilisateurs.
 
+Voici quelques propositions qui peuvent encore améliorer 2D Library: 
+
+* Possibilité de visualiser la bibliothéque en 3D 
+
+* Possibilité de choisir la langue de la bibliothèque 
+
+* Classer les livres par genre. 
+
+* Possibilité de créé un compte avec nom d'utilisateur et mot de passe, pour que la bibliothéque soit commune à plusieurs lecteurs. 
+
+	- Possibilité de donner son avis par rapport à un livre et de le noter 
+	- Possibilité de marquer un livre comme lu
+	- Recommandation de livres similaires (meme auteur/genre) 
+ 
+* Possibilité d’envoyer par mail le svg avec un bouton pour partager sa bibilothéque avec ses amis
 
 *Déjà fait*:
 
