@@ -2,6 +2,7 @@ package io.github.oliviercailloux.twod_library.model;
 
 import java.util.Objects;
 
+import org.glassfish.jersey.internal.guava.MoreObjects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,10 +26,8 @@ public class Author {
 	/**
 	 * Author's constructor.
 	 * 
-	 * @param author's
-	 *            first name
-	 * @param author's
-	 *            last name
+	 * @param author's first name
+	 * @param author's last name
 	 */
 	public Author(String lastName, String firstName) {
 		this.lastName = lastName;
@@ -36,8 +35,7 @@ public class Author {
 	}
 
 	/***
-	 * @param the
-	 *            author to compare
+	 * @param the author to compare
 	 * @return true if the author is equal to the parameter
 	 */
 	@Override
@@ -52,7 +50,19 @@ public class Author {
 			return false;
 		}
 		Author castedAuthor = (Author) author;
-		return this.lastName.equals(castedAuthor.lastName) && this.firstName.equals(castedAuthor.firstName);
+		return this.lastName.equalsIgnoreCase(castedAuthor.lastName)
+				&& this.firstName.equalsIgnoreCase(castedAuthor.firstName);
+	}
+
+	/**
+	 * 
+	 * @param regex the string to compare
+	 * @return true if author containing in firstName or lastName attributes the
+	 *         regex and it's insensitive to case and accents.
+	 */
+	public boolean checkAuthorRegex(String regex) {
+		return getLastName().toLowerCase().contains(regex.toLowerCase()) || getFirstName().toLowerCase().contains(regex)
+				|| MakeSearch.isSame(getLastName(), regex) || MakeSearch.isSame(getFirstName(), regex);
 	}
 
 	/**
@@ -84,8 +94,7 @@ public class Author {
 	/**
 	 * Author's first name setter
 	 * 
-	 * @param author's
-	 *            first name
+	 * @param author's first name
 	 */
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
@@ -94,11 +103,18 @@ public class Author {
 	/**
 	 * Author's last name setter
 	 * 
-	 * @param author's
-	 *            last name
+	 * @param author's last name
 	 */
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
 
+	/**
+	 * using to represent the object Author
+	 */
+	public String toString() {
+
+		return MoreObjects.toStringHelper(this).add("firstname", getFirstName()).add("lastname", getLastName())
+				.toString();
+	}
 }

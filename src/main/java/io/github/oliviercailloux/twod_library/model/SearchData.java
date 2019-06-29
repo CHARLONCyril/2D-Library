@@ -2,17 +2,19 @@ package io.github.oliviercailloux.twod_library.model;
 
 import org.glassfish.jersey.internal.guava.MoreObjects;
 
+import com.google.common.collect.Range;
+
 public final class SearchData {
 
 	private final String authorRegex;
-	private final PublicationRange publication;
+	private final Range<Integer> publication;
 	private final String titleRegex;
 
 	public String getAuthorRegex() {
 		return authorRegex;
 	}
 
-	public PublicationRange getPublication() {
+	public Range<Integer> getPublication() {
 		return publication;
 	}
 
@@ -20,14 +22,13 @@ public final class SearchData {
 		return titleRegex;
 	}
 
-	private SearchData(String authorRegex1, PublicationRange publication, String titleRegex) {
+	private SearchData(String authorRegex1, Range<Integer> publication, String titleRegex) {
 		this.authorRegex = authorRegex1;
 		this.publication = publication;
 		this.titleRegex = titleRegex;
 	}
 
-	public static SearchData createSearchDataObject(String authorRegex, PublicationRange publication,
-			String titleRegex) {
+	public static SearchData createSearchDataObject(String authorRegex, Range<Integer> publication, String titleRegex) {
 		return new SearchData(authorRegex, publication, titleRegex);
 	}
 
