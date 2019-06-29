@@ -51,17 +51,16 @@ public class MakeSearchTest {
 
 	@Test
 	public void search_by_author_should_Return_list_of_book_for_author_corresponding() {
-		SearchData search = SearchData.createSearchDataObject("hugo",
-				PublicationRange.createPublicationRange(null, null), null);
+		SearchData search = SearchData.createSearchDataObject("hugo", SearchData.generateRangeInteger(-1, -1), null);
 		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
 		assertEquals(2, resultSearch.size());
-		assertEquals("Les misérables", resultSearch.get(0).getTitle());
-		assertEquals("J'aime le java", resultSearch.get(1).getTitle());
+		assertEquals("J'aime le java", resultSearch.get(0).getTitle());
+		assertEquals("Les misérables", resultSearch.get(1).getTitle());
 	}
 
 	@Test
 	public void search_by_title_should_Return_list_of_book_for_title_corresponding() {
-		SearchData search = SearchData.createSearchDataObject(null, PublicationRange.createPublicationRange(null, null),
+		SearchData search = SearchData.createSearchDataObject(null, SearchData.generateRangeInteger(-1, -1),
 				"Les misÊrables");
 		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
 		assertEquals(1, resultSearch.size());
@@ -70,14 +69,13 @@ public class MakeSearchTest {
 
 	@Test
 	public void search_by_rangeOfYear_should_Return_list_of_book_for_rangeOfYear_corresponding() {
-		SearchData search = SearchData.createSearchDataObject(null, PublicationRange.createPublicationRange(1860, 2015),
-				null);
+		SearchData search = SearchData.createSearchDataObject(null, SearchData.generateRangeInteger(1860, 2015), null);
 		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
 		assertEquals(4, resultSearch.size());
-		assertEquals("Les misérables", resultSearch.get(0).getTitle());
-		assertEquals("Harry Poopper", resultSearch.get(1).getTitle());
-		assertEquals("Une vie de coccinelle", resultSearch.get(2).getTitle());
-		assertEquals("J'aime le java", resultSearch.get(3).getTitle());
+		assertEquals("Une vie de coccinelle", resultSearch.get(0).getTitle());
+		assertEquals("J'aime le java", resultSearch.get(1).getTitle());
+		assertEquals("Harry Poopper", resultSearch.get(2).getTitle());
+		assertEquals("Les misérables", resultSearch.get(3).getTitle());
 	}
 
 	@Test
@@ -85,16 +83,6 @@ public class MakeSearchTest {
 		assertEquals(MakeSearch.isSame("les misÉrables", "Les misérables"), true);
 		assertEquals(MakeSearch.isSame("les misêrables", "Les misérables"), true);
 		assertEquals(MakeSearch.isSame("les miserables", "Les misérables"), true);
-	}
-
-	@Test
-	public void test_intersection() {
-		SearchData search = SearchData.createSearchDataObject("Hugo",
-				PublicationRange.createPublicationRange(1860, 2015), null);
-		List<Book> resultSearch = s.getResultSearchData(search, library.getListOfAllTheBooks());
-		assertEquals(2, resultSearch.size());
-		assertEquals("Les misérables", resultSearch.get(0).getTitle());
-		assertEquals("J'aime le java", resultSearch.get(1).getTitle());
 	}
 
 }

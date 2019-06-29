@@ -41,4 +41,18 @@ public final class SearchData {
 				.add("publication", getPublication()).add("titleRegex", getTitleRegex()).toString();
 	}
 
+	public static Range<Integer> generateRangeInteger(int a, int b) {
+		Range<Integer> range = null;
+		if (a == -1 && b == -1) {
+			range = Range.all();
+		} else if (a == -1 && b >= 0) {
+			range = Range.atMost(b);
+		} else if (a >= 0 && b == -1) {
+			range = Range.atLeast(a);
+		} else {
+			range = Range.closed(a, b);
+		}
+		return range;
+	}
+
 }

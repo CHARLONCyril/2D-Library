@@ -82,8 +82,9 @@ public class SVGLibrary {
 	 * @param leaning
 	 * @param Library
 	 * @param leaning
+	 * @param string
 	 */
-	public void generate(boolean leaning, String bkColor, String bColor, String sColor)
+	public void generate(boolean leaning, String bkColor, String bColor, String sColor, String string)
 			throws IOException, ParserConfigurationException {
 
 		int dimCanvasX = (int) ((int) library.getFrameSizeW() - 0.055 * library.getFrameSizeW());
@@ -121,8 +122,7 @@ public class SVGLibrary {
 	/***
 	 * Generate the file's name
 	 *
-	 * @param length
-	 *            : Number of file's name characters
+	 * @param length : Number of file's name characters
 	 * @return a list of length characters
 	 */
 	public String generate(int length) {
@@ -157,8 +157,7 @@ public class SVGLibrary {
 	/***
 	 * setter of the library
 	 * 
-	 * @param library2
-	 *            the library to set
+	 * @param library2 the library to set
 	 */
 	public void setLibrary(Library library2) {
 		this.library = library2;
@@ -167,8 +166,7 @@ public class SVGLibrary {
 	/***
 	 * setter of the new image
 	 * 
-	 * @param the
-	 *            newImage to set
+	 * @param the newImage to set
 	 */
 	public void setNewImage(String newImage) {
 		this.newImage = newImage;

@@ -48,6 +48,7 @@ public class MakeSearch implements JavaSearcher<Book> {
 			@SuppressWarnings("unchecked")
 			Range<Integer> p = (Range<Integer>) value;
 			collection.stream().filter(b -> p.contains((b.getYear()))).forEach(books::add);
+			collection.stream().map(b -> p.contains(b.getYear())).forEach(System.out::println);
 		}
 		return books;
 	}
@@ -60,8 +61,11 @@ public class MakeSearch implements JavaSearcher<Book> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static HashSet<Book> intersection(Collection list1, Collection list2) {
-		HashSet<Book> intersect = (HashSet<Book>) list1.stream().distinct().filter(list2::contains)
-				.collect(Collectors.toSet());
+		if (list1.isEmpty())
+			return (HashSet<Book>) list2;
+		else if (list2.isEmpty())
+			return (HashSet<Book>) list1;
+		HashSet<Book> intersect = (HashSet<Book>) list1.stream().filter(list2::contains).collect(Collectors.toSet());
 		return intersect;
 	}
 
