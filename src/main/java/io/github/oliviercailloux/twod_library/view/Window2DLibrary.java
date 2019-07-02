@@ -15,14 +15,27 @@ import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import java.util.Enumeration;
 import java.util.List;
 
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.HashPrintRequestAttributeSet;
+import javax.print.attribute.PrintRequestAttributeSet;
+import javax.print.attribute.standard.Copies;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -51,7 +64,6 @@ import io.github.oliviercailloux.twod_library.controller.DataFile;
 import io.github.oliviercailloux.twod_library.model.Book;
 import io.github.oliviercailloux.twod_library.model.Library;
 import io.github.oliviercailloux.twod_library.model.SearchData;
-
 
 public class Window2DLibrary extends JFrame {
 
@@ -221,12 +233,47 @@ public class Window2DLibrary extends JFrame {
 			if (s.equals("Generate my library") || s.equals("Reload my library now")) {
 				try {
 					updateSVGLibrary();
-				} catch (ParserConfigurationException ex) {
+				} catch (ParserConfigurationException | IOException ex) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
-					ex.printStackTrace();
+					throw new RuntimeException();
 				}
 			}
 
+		}
+	}
+
+	class PrintSVGListener implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// source:
+			// http://www.java2s.com/Code/JavaAPI/javax.print/DocFlavorINPUTSTREAMGIF.htm
+			/** Creates a new instance of PrintImage */
+			PrintRequestAttributeSet pras = new HashPrintRequestAttributeSet();
+			pras.add(new Copies(1));
+
+			PrintService pss[] = PrintServiceLookup.lookupPrintServices(DocFlavor.INPUT_STREAM.GIF, pras);
+
+			if (pss.length == 0)
+				throw new RuntimeException("No printer services available.");
+
+			PrintService ps = pss[0];
+			System.out.println("Printing to " + ps);
+
+			DocPrintJob job = ps.createPrintJob();
+
+			FileInputStream fin;
+			try {
+				fin = new FileInputStream("C:/twod_library/controller/library.png");
+
+				Doc doc = new SimpleDoc(fin, DocFlavor.INPUT_STREAM.GIF, null);
+
+				job.print(doc, pras);
+
+				fin.close();
+			} catch (PrintException | IOException e1) {
+				throw new RuntimeException();
+			}
 		}
 	}
 
@@ -293,6 +340,7 @@ public class Window2DLibrary extends JFrame {
 			this.setSearchTextField(searchTextField2);
 			this.setQteBookSerach(qteBookSerach);
 		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
 
@@ -317,9 +365,9 @@ public class Window2DLibrary extends JFrame {
 					} else {
 						updateDrawingLibrary(svgLibrary);
 					}
-				} catch (ParserConfigurationException ex) {
+				} catch (ParserConfigurationException | IOException e1) {
 					LOGGER.error("Impossible to refresh the button after the last update of library");
-					ex.printStackTrace();
+					throw new RuntimeException();
 				}
 			}
 		}
@@ -352,7 +400,6 @@ public class Window2DLibrary extends JFrame {
 		public void setQteBookSerach(JFormattedTextField qteBookSerach) {
 			this.qteBookSerach = qteBookSerach;
 		}
-
 
 	}
 
@@ -406,7 +453,7 @@ public class Window2DLibrary extends JFrame {
 	private JRadioButton bDarkB, bLightB, bAutoB, bLeanS, bNotLeanS, bDarkBk, bLightBk, bAutoBk, bDarkS, bLightS,
 			bAutoS, sortAutoButton;
 
-	private JButton generateButton;
+	private JButton generateButton, printSVGDocument;
 
 	private ImageIcon myLibIcon;
 
@@ -672,7 +719,6 @@ public class Window2DLibrary extends JFrame {
 		sortAscendingYearButton = new JCheckBox("Most recent first (sort by year)");
 		sortAscendingYearButton.setFont(new Font("Book Antiqua", Font.ITALIC, 20));
 		sortAscendingYearButton.setOpaque(false);
-
 
 		numberBooksPerShelfTextField.addFocusListener(new FocusListener() {
 
@@ -952,8 +998,11 @@ public class Window2DLibrary extends JFrame {
 	public JPanel getSouthPanel() {
 		JPanel southPanel = new JPanel();
 		generateButton = new JButton("Generate my library");
+		printSVGDocument = new JButton("Print my library");
 		generateButton.addActionListener(new GenerateButtonListener());
+		printSVGDocument.addActionListener(new PrintSVGListener());
 		southPanel.add(generateButton);
+		southPanel.add(printSVGDocument);
 		return southPanel;
 	}
 
@@ -972,9 +1021,10 @@ public class Window2DLibrary extends JFrame {
 	 *
 	 * @return nothing
 	 * @throws ParserConfigurationException
+	 * @throws IOException
 	 */
 
-	public void updateSVGLibrary() throws ParserConfigurationException {
+	public void updateSVGLibrary() throws ParserConfigurationException, IOException {
 		generateButton.setText("Reload my library now");
 
 		switch (sort) {
@@ -983,7 +1033,7 @@ public class Window2DLibrary extends JFrame {
 					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		case "Title":
-			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));	
+			svgLibrary.setLibrary(new Library(svgLibrary.getLibrary().sortByTitle(), nbBooksPerShelf));
 
 			break;
 		case "Year":
@@ -992,14 +1042,14 @@ public class Window2DLibrary extends JFrame {
 					Integer.parseInt(numberBooksPerShelfTextField.getText())));
 			break;
 		default:
-			 svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
-			 break;
+			svgLibrary = new SVGLibrary(new Library(dataFile.read(), nbBooksPerShelf));
+			break;
 
 		}
 		updateDrawingLibrary(svgLibrary);
 	}
 
-	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException {
+	public void updateDrawingLibrary(SVGLibrary svgLibrary) throws ParserConfigurationException, IOException {
 
 		try {
 			svgLibrary.generate(leaning, backgroundColor, bookColor, shelfColor,
@@ -1029,6 +1079,9 @@ public class Window2DLibrary extends JFrame {
 		pCenter.add(asc);
 		pCenter.updateUI();
 		File fichier = new File(svgLibrary.getNewImage());
+		Path p = Paths.get(fichier.toURI());
+		Path p1 = Paths.get(new File("C:/twod_library/controller/library.png").toURI());
+		Files.copy(p, p1, StandardCopyOption.REPLACE_EXISTING);
 		fichier.delete();
 	}
 
